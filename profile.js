@@ -1,0 +1,229 @@
+// Profile Management
+class ProfileManager {
+    constructor() {
+        this.userPosts = [];
+        this.init();
+    }
+
+    async init() {
+        // Wait for supabase to be available
+        if (typeof window.supabase === 'undefined') {
+            console.error('Supabase client not loaded yet');
+            setTimeout(() => this.init(), 100);
+            return;
+        }
+
+        // Set up navigation
+        this.setupNavigation();
+
+        if (authManager.currentUser) {
+            this.showProfileContent();
+            await this.loadUserInfo();
+            await this.loadUserPosts();
+        } else {
+            this.showAuthSection();
+        }
+
+        // Listen for auth changes
+        window.supabase.auth.onAuthStateChange((event, session) => {
+            if (session?.user) {
+                this.showProfileContent();
+                this.loadUserInfo();
+                this.loadUserPosts();
+            } else {
+                this.showAuthSection();
+            }
+        });
+    }
+
+    setupNavigation() {
+        document.getElementById('home-btn').onclick = () => {
+            window.location.href = 'index.html';
+        };
+
+        document.getElementById('logout-btn').onclick = async () => {
+            await authManager.signOut();
+            window.location.href = 'index.html';
+        };
+    }
+
+    showProfileContent() {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('profile-content').style.display = 'block';
+    }
+
+    showAuthSection() {
+        document.getElementById('profile-content').style.display = 'none';
+        document.getElementById('auth-section').style.display = 'block';
+    }
+
+    async loadUserInfo() {
+        try {
+            const userDetails = document.getElementById('user-details');
+            const email = authManager.currentUser.email;
+            const createdAt = new Date(authManager.currentUser.created_at).toLocaleDateString();
+
+            userDetails.innerHTML = `
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Member since:</strong> ${createdAt}</p>
+                <p><strong>Total posts:</strong> <span id="post-count">${this.userPosts.length}</span></p>
+            `;
+        } catch (error) {
+            console.error('Error loading user info:', error);
+        }
+    }
+
+    async loadUserPosts() {
+        try {
+            const { data, error } = await window.supabase
+                .from('posts')
+                .select('*')
+                .eq('author_id', authManager.currentUser.id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            this.userPosts = data || [];
+            this.displayUserPosts();
+            this.updatePostCount();
+        } catch (error) {
+            console.error('Error loading user posts:', error);
+            this.showMessage('Error loading your posts', 'error');
+        }
+    }
+
+    displayUserPosts() {
+        const container = document.getElementById('user-posts-container');
+
+        if (this.userPosts.length === 0) {
+            container.innerHTML = '<p>You haven\'t posted any hot takes yet. <a href="index.html">Go share your first one!</a></p>';
+            return;
+        }
+
+        container.innerHTML = this.userPosts.map(post => this.createUserPostElement(post)).join('');
+    }
+
+    createUserPostElement(post) {
+        const date = new Date(post.created_at).toLocaleDateString();
+        const time = new Date(post.created_at).toLocaleTimeString();
+        const anonymousBadge = post.is_anonymous ? '<span class="anonymous-badge">Anonymous</span>' : '';
+
+        return `
+            <div class="post" data-id="${post.id}">
+                <div class="post-header">
+                    <span class="post-date">${date} at ${time}</span>
+                    ${anonymousBadge}
+                </div>
+                <div class="post-content">${this.escapeHtml(post.content)}</div>
+                <div class="post-actions">
+                    <button class="edit-btn" onclick="profileManager.editPost('${post.id}')">Edit</button>
+                    <button class="delete-btn" onclick="profileManager.deletePost('${post.id}')">Delete</button>
+                </div>
+            </div>
+        `;
+    }
+
+    async editPost(postId) {
+        const postElement = document.querySelector(`[data-id="${postId}"]`);
+        const postContent = postElement.querySelector('.post-content');
+        const originalContent = postContent.textContent;
+
+        // Create edit form
+        postContent.innerHTML = `
+            <textarea class="edit-textarea">${originalContent}</textarea>
+            <div class="edit-actions">
+                <button onclick="profileManager.saveEdit('${postId}')">Save</button>
+                <button onclick="profileManager.cancelEdit('${postId}', '${this.escapeHtml(originalContent)}')">Cancel</button>
+            </div>
+        `;
+    }
+
+    async saveEdit(postId) {
+        const postElement = document.querySelector(`[data-id="${postId}"]`);
+        const textarea = postElement.querySelector('.edit-textarea');
+        const newContent = textarea.value.trim();
+
+        if (!newContent) {
+            this.showMessage('Post content cannot be empty', 'error');
+            return;
+        }
+
+        try {
+            const { error } = await window.supabase
+                .from('posts')
+                .update({ content: newContent })
+                .eq('id', postId);
+
+            if (error) throw error;
+
+            await this.loadUserPosts(); // Reload to show updated post
+            this.showMessage('Post updated successfully!', 'success');
+        } catch (error) {
+            console.error('Error updating post:', error);
+            this.showMessage('Error updating post', 'error');
+        }
+    }
+
+    cancelEdit(postId, originalContent) {
+        const postElement = document.querySelector(`[data-id="${postId}"]`);
+        const postContent = postElement.querySelector('.post-content');
+        postContent.textContent = originalContent;
+    }
+
+    async deletePost(postId) {
+        if (!confirm('Are you sure you want to delete this hot take? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const { error } = await window.supabase
+                .from('posts')
+                .delete()
+                .eq('id', postId);
+
+            if (error) throw error;
+
+            await this.loadUserPosts(); // Reload to remove deleted post
+            this.showMessage('Post deleted successfully!', 'success');
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            this.showMessage('Error deleting post', 'error');
+        }
+    }
+
+    updatePostCount() {
+        const postCountElement = document.getElementById('post-count');
+        if (postCountElement) {
+            postCountElement.textContent = this.userPosts.length;
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    showMessage(message, type) {
+        // Create message element if it doesn't exist
+        let messageEl = document.getElementById('profile-message');
+        if (!messageEl) {
+            messageEl = document.createElement('div');
+            messageEl.id = 'profile-message';
+            document.getElementById('user-posts').insertBefore(messageEl, document.getElementById('user-posts-container'));
+        }
+
+        messageEl.textContent = message;
+        messageEl.className = `message ${type}`;
+        messageEl.style.display = 'block';
+
+        setTimeout(() => {
+            if (messageEl) {
+                messageEl.style.display = 'none';
+            }
+        }, 3000);
+    }
+}
+
+// Initialize profile manager
+const profileManager = new ProfileManager();

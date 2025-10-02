@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Takes - Share Your Unpopular Opinions</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Hot Takes</h1>
+        <nav>
+            <button id="auth-btn">Login</button>
+            <button id="profile-btn" style="display: none;">Profile</button>
+            <button id="logout-btn" style="display: none;">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <div id="auth-section" style="display: none;">
+            <h2>Welcome! Please log in to share your hot takes.</h2>
+        </div>
+
+        <div id="main-content">
+            <section id="create-post" style="display: none;">
+                <h2>Share Your Hot Take</h2>
+                <form id="post-form">
+                    <textarea id="post-content" placeholder="What's your unpopular opinion?" required maxlength="500"></textarea>
+                    <div>
+                        <label>
+                            <input type="checkbox" id="anonymous-post"> Post anonymously
+                        </label>
+                    </div>
+                    <button type="submit">Post</button>
+                </form>
+            </section>
+
+            <section id="posts-feed">
+                <h2>Latest Hot Takes</h2>
+                <div id="posts-container">
+                    <!-- Posts will be loaded here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="posts.js"></script>
+</body>
+</html>

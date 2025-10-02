@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Hot Takes</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>My Profile</h1>
+        <nav>
+            <button id="home-btn">Home</button>
+            <button id="logout-btn">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <div id="auth-section" style="display: none;">
+            <h2>Please log in to view your profile.</h2>
+        </div>
+
+        <div id="profile-content" style="display: none;">
+            <section id="user-info">
+                <h2>My Information</h2>
+                <div id="user-details">
+                    <!-- User info will be loaded here -->
+                </div>
+            </section>
+
+            <section id="user-posts">
+                <h2>My Hot Takes</h2>
+                <div id="user-posts-container">
+                    <!-- User posts will be loaded here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>

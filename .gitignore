@@ -1,0 +1,42 @@
+# Supabase Configuration (contains sensitive credentials)
+supabase-config.js
+
+# Environment variables (if used)
+.env
+.env.local
+.env.production
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# node_modules (if added later)
+node_modules/
+
+# Build outputs (if added later)
+dist/
+build/
