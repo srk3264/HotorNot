@@ -108,8 +108,7 @@ class PostManager {
                     content,
                     is_anonymous,
                     created_at,
-                    author_id,
-                    user_profiles(display_name)
+                    author_id
                 `)
                 .order('created_at', { ascending: false });
 
@@ -117,6 +116,7 @@ class PostManager {
 
             this.posts = data || [];
             await this.loadLikesForPosts();
+            await this.loadUserProfilesForPosts();
             this.displayPosts();
         } catch (error) {
             console.error('Error loading posts:', error);
@@ -153,6 +153,25 @@ class PostManager {
         }
     }
 
+    async loadUserProfilesForPosts() {
+        try {
+            // Get all user profiles for post authors
+            const { data: profilesData, error } = await window.supabase
+                .from('user_profiles')
+                .select('user_id, display_name');
+
+            if (error) throw error;
+
+            // Create a lookup map for user profiles
+            this.userProfilesData = {};
+            profilesData?.forEach(profile => {
+                this.userProfilesData[profile.user_id] = profile;
+            });
+        } catch (error) {
+            console.error('Error loading user profiles:', error);
+        }
+    }
+
     displayPosts() {
         const container = document.getElementById('posts-container');
 
@@ -170,12 +189,13 @@ class PostManager {
         // Get display name or fallback to email prefix
         let authorText = 'Anonymous';
         if (!post.is_anonymous) {
-            if (post.user_profiles?.display_name) {
-                authorText = post.user_profiles.display_name;
-            } else if (authManager.currentUser?.email) {
-                // Fallback to email prefix if no display name is set
-                authorText = authManager.currentUser.email.split('@')[0];
+            // Check if we have profile data for this user
+            const userProfile = this.userProfilesData[post.author_id];
+            if (userProfile?.display_name) {
+                authorText = userProfile.display_name;
             } else {
+                // Fallback to current user's email prefix for now
+                // In a production app, you'd want to get the actual author's email
                 authorText = 'User';
             }
         }
