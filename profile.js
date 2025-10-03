@@ -269,6 +269,9 @@ class ProfileManager {
 
             if (result.error) throw result.error;
 
+            // Update existing posts to use new display name
+            await this.updateExistingPostsDisplayName(newDisplayName);
+
             // Update the display
             document.getElementById('display-name-text').textContent = newDisplayName;
             this.cancelEditName();
@@ -276,6 +279,24 @@ class ProfileManager {
         } catch (error) {
             console.error('Error updating display name:', error);
             this.showMessage('Error updating display name', 'error');
+        }
+    }
+
+    async updateExistingPostsDisplayName(newDisplayName) {
+        try {
+            // Update all existing posts by this user to use the new display name
+            const { error } = await window.supabase
+                .from('posts')
+                .update({ author_display_name: newDisplayName })
+                .eq('author_id', authManager.currentUser.id)
+                .eq('is_anonymous', false); // Only update non-anonymous posts
+
+            if (error) {
+                console.error('Error updating existing posts:', error);
+                // Don't show error to user since the profile update succeeded
+            }
+        } catch (error) {
+            console.error('Error updating existing posts display name:', error);
         }
     }
 
