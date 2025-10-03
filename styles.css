@@ -265,8 +265,8 @@ main {
     border-radius: 16px;
     outline: 1px rgba(0, 0, 0, 0.12) solid;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
+    justify-content: center;
+    align-items: flex-start;
     gap: 40px;
     display: inline-flex;
     margin-bottom: 1.5rem;
@@ -460,11 +460,11 @@ main {
 }
 
 .post-interactions {
-    align-self: stretch;
+    align-self: normal;
     justify-content: center;
     align-items: center;
     gap: 16px;
-    display: inline-flex;
+    display: flow;
     width: 100%;
 }
 
