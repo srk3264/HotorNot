@@ -25,16 +25,27 @@
 
         <div id="main-content">
             <section id="create-post" style="display: none;">
-                <h2>Share Your Hot Take</h2>
-                <form id="post-form">
-                    <textarea id="post-content" placeholder="What's your unpopular opinion?" required maxlength="500"></textarea>
-                    <div>
-                        <label>
-                            <input type="checkbox" id="anonymous-post"> Post anonymously
-                        </label>
+                <div class="post-card create-post-card">
+                    <div class="post-avatar">
+                        <div class="avatar-circle">👤</div>
                     </div>
-                    <button type="submit">Post</button>
-                </form>
+                    <div class="post-content-area">
+                        <div class="post-input-header">What's your take?</div>
+                        <form id="post-form">
+                            <textarea id="post-content" placeholder="Share your unpopular opinion..." required maxlength="500"></textarea>
+                            <div class="form-bottom">
+                                <label class="anonymous-toggle">
+                                    <input type="checkbox" id="anonymous-post">
+                                    <span class="toggle-switch"></span>
+                                    Go anonymous
+                                </label>
+                                <button type="submit" class="post-submit-btn">
+                                    <span>→</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </section>
 
             <section id="posts-feed">

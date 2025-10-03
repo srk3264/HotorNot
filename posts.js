@@ -152,29 +152,40 @@ class PostManager {
         const likesData = this.likesData[post.id] || { likes: 0, dislikes: 0, userLike: null };
         const { likes, dislikes, userLike } = likesData;
 
-        return `
-            <div class="post" data-id="${post.id}">
-                <div class="post-header">
-                    <span class="post-author">${authorText}</span>
-                    <span class="post-date">${date}</span>
-                </div>
-                <div class="post-content">${this.escapeHtml(post.content)}</div>
+        // Create a title from the first line of content
+        const contentLines = post.content.split('\n');
+        const title = contentLines[0]?.substring(0, 50) + (contentLines[0]?.length > 50 ? '...' : '') || 'Untitled';
+        const description = contentLines.slice(1).join('\n') || '';
 
-                <div class="post-interactions">
-                    <div class="like-section">
-                        <button class="like-btn ${userLike === 'like' ? 'active' : ''}" onclick="postManager.likePost('${post.id}', 'like')">
-                            👍 ${likes}
-                        </button>
-                        <button class="dislike-btn ${userLike === 'dislike' ? 'active' : ''}" onclick="postManager.likePost('${post.id}', 'dislike')">
-                            👎 ${dislikes}
-                        </button>
+        return `
+            <div class="post-card" data-id="${post.id}">
+                <div class="post-avatar">
+                    <div class="avatar-circle">${post.is_anonymous ? '👤' : '👤'}</div>
+                </div>
+                <div class="post-main">
+                    <div class="post-user-info">
+                        <span class="post-username">${authorText}</span>
+                    </div>
+                    <h3 class="post-title">${this.escapeHtml(title)}</h3>
+                    ${description ? `<p class="post-description">${this.escapeHtml(description)}</p>` : ''}
+                    <div class="post-interactions">
+                        <div class="like-section">
+                            <button class="like-btn ${userLike === 'like' ? 'active' : ''}" onclick="postManager.likePost('${post.id}', 'like')">
+                                ← ${likes}
+                            </button>
+                            <button class="dislike-btn ${userLike === 'dislike' ? 'active' : ''}" onclick="postManager.likePost('${post.id}', 'dislike')">
+                                → ${dislikes}
+                            </button>
+                        </div>
                     </div>
                 </div>
-
                 ${canEdit ? `
-                    <div class="post-actions">
-                        <button class="edit-btn" onclick="postManager.editPost('${post.id}')">Edit</button>
-                        <button class="delete-btn" onclick="postManager.deletePost('${post.id}')">Delete</button>
+                    <div class="post-menu">
+                        <button class="menu-btn" onclick="postManager.togglePostMenu('${post.id}')">⋯</button>
+                        <div class="post-dropdown" id="dropdown-${post.id}" style="display: none;">
+                            <button onclick="postManager.editPost('${post.id}')">Edit</button>
+                            <button onclick="postManager.deletePost('${post.id}')">Delete</button>
+                        </div>
                     </div>
                 ` : ''}
             </div>
@@ -306,6 +317,21 @@ class PostManager {
         } catch (error) {
             console.error('Error deleting post:', error);
             this.showMessage('Error deleting post', 'error');
+        }
+    }
+
+    togglePostMenu(postId) {
+        // Close all other dropdowns first
+        document.querySelectorAll('.post-dropdown').forEach(dropdown => {
+            if (dropdown.id !== `dropdown-${postId}`) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Toggle the clicked dropdown
+        const dropdown = document.getElementById(`dropdown-${postId}`);
+        if (dropdown) {
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         }
     }
 
