@@ -460,11 +460,11 @@ main {
 }
 
 .post-interactions {
-    align-self: normal;
+    align-self: stretch;
     justify-content: center;
     align-items: center;
     gap: 16px;
-    display: flow;
+    display: inline-flex;
     width: 100%;
 }
 
@@ -472,15 +472,15 @@ main {
     display: flex;
     gap: 1rem;
     align-items: center;
+    width: 100%;
 }
 
 .like-btn, .dislike-btn {
     flex: 1 1 0;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding: 12px 16px;
     background: white;
     border-radius: 8px;
-    outline: 1px rgba(0, 0, 0, 0.12) solid;
+    border: 1px rgba(0, 0, 0, 0.12) solid;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -488,7 +488,8 @@ main {
     display: inline-flex;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 60px;
+    min-height: 64px;
+    position: relative;
 }
 
 .like-btn:hover {
@@ -507,31 +508,29 @@ main {
     width: 16px;
     height: 16px;
     position: relative;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .like-btn .icon::before {
     content: '';
-    width: 9.33px;
-    height: 9.33px;
-    left: 12.67px;
-    top: 12.67px;
-    position: absolute;
-    transform: rotate(180deg);
-    transform-origin: top left;
-    outline: 1.33px rgba(0, 0, 0, 0.38) solid;
-    outline-offset: -0.67px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid rgba(0, 0, 0, 0.38);
+    transform: rotate(90deg);
 }
 
 .dislike-btn .icon::before {
     content: '';
-    width: 9.33px;
-    height: 9.33px;
-    left: 3.33px;
-    top: 3.33px;
-    position: absolute;
-    outline: 1.33px rgba(0, 0, 0, 0.38) solid;
-    outline-offset: -0.67px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid rgba(0, 0, 0, 0.38);
+    transform: rotate(90deg);
 }
 
 .like-btn.active {
