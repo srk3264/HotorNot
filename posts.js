@@ -89,8 +89,7 @@ class PostManager {
                     content,
                     is_anonymous,
                     created_at,
-                    author_id,
-                    profiles:user_id(email)
+                    author_id
                 `)
                 .order('created_at', { ascending: false });
 
