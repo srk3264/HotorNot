@@ -32,24 +32,43 @@ class PostManager {
 
     setupPostForm() {
         const postForm = document.getElementById('post-form');
+        const postTitle = document.getElementById('post-title');
         const postContent = document.getElementById('post-content');
         const anonymousCheckbox = document.getElementById('anonymous-post');
+
+        // Character counters
+        const titleCounter = document.querySelector('#post-title + .char-counter');
+        const contentCounter = document.querySelector('#post-content + .char-counter');
+
+        // Update character counters
+        postTitle.addEventListener('input', () => {
+            titleCounter.textContent = `${postTitle.value.length}/200`;
+        });
+
+        postContent.addEventListener('input', () => {
+            contentCounter.textContent = `${postContent.value.length}/1000`;
+        });
 
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const title = postTitle.value.trim();
             const content = postContent.value.trim();
             const isAnonymous = anonymousCheckbox.checked;
 
-            if (!content) {
-                this.showMessage('Please enter your hot take!', 'error');
+            if (!title || !content) {
+                this.showMessage('Please enter both title and content!', 'error');
                 return;
             }
 
-            const result = await this.createPost(content, isAnonymous);
+            const fullContent = `${title}\n\n${content}`;
+            const result = await this.createPost(fullContent, isAnonymous);
 
             if (result.success) {
+                postTitle.value = '';
                 postContent.value = '';
+                titleCounter.textContent = '0/200';
+                contentCounter.textContent = '0/1000';
                 anonymousCheckbox.checked = false;
                 this.showMessage('Hot take posted successfully!', 'success');
                 this.loadPosts(); // Reload posts to show the new one

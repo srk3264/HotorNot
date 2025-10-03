@@ -25,27 +25,28 @@
 
         <div id="main-content">
             <section id="create-post" style="display: none;">
-                <div class="post-card create-post-card">
-                    <div class="post-avatar">
-                        <div class="avatar-circle">👤</div>
+                <form id="post-form">
+                    <div class="input-group">
+                        <input type="text" id="post-title" placeholder="Enter a bold title..." maxlength="200" required>
+                        <div class="char-counter">0/200</div>
                     </div>
-                    <div class="post-content-area">
-                        <div class="post-input-header">What's your take?</div>
-                        <form id="post-form">
-                            <textarea id="post-content" placeholder="Share your unpopular opinion..." required maxlength="500"></textarea>
-                            <div class="form-bottom">
-                                <label class="anonymous-toggle">
-                                    <input type="checkbox" id="anonymous-post">
-                                    <span class="toggle-switch"></span>
-                                    Go anonymous
-                                </label>
-                                <button type="submit" class="post-submit-btn">
-                                    <span>→</span>
-                                </button>
-                            </div>
-                        </form>
+
+                    <div class="input-group">
+                        <textarea id="post-content" placeholder="Explain your hot take..." maxlength="1000" required></textarea>
+                        <div class="char-counter">0/1000</div>
                     </div>
-                </div>
+
+                    <div class="form-actions">
+                        <label class="anonymous-toggle">
+                            <input type="checkbox" id="anonymous-post">
+                            <span class="toggle-switch"></span>
+                            Go anonymous
+                        </label>
+                        <button type="submit" class="share-btn">
+                            Share Take →
+                        </button>
+                    </div>
+                </form>
             </section>
 
             <section id="posts-feed">
