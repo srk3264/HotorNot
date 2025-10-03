@@ -73,9 +73,19 @@ class ProfileManager {
 
             let displayName = emailPrefix; // Default to email prefix
 
-            if (error && error.code === 'PGRST116') {
-                // Profile doesn't exist, create it with email prefix as default
-                await this.createDefaultProfile(emailPrefix);
+            if (error) {
+                if (error.code === 'PGRST116' || error.message.includes('No rows found')) {
+                    // Profile doesn't exist, create it with email prefix as default
+                    console.log('Creating default profile for user:', authManager.currentUser.id);
+                    const createResult = await this.createDefaultProfile(emailPrefix);
+                    if (createResult.success) {
+                        console.log('Default profile created successfully');
+                    } else {
+                        console.error('Failed to create default profile:', createResult.error);
+                    }
+                } else {
+                    console.error('Error loading profile:', error);
+                }
             } else if (profile?.display_name) {
                 displayName = profile.display_name;
             }
@@ -111,9 +121,13 @@ class ProfileManager {
 
             if (error) {
                 console.error('Error creating default profile:', error);
+                return { success: false, error };
             }
+
+            return { success: true };
         } catch (error) {
             console.error('Error creating default profile:', error);
+            return { success: false, error };
         }
     }
 
