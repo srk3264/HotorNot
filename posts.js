@@ -108,7 +108,8 @@ class PostManager {
                     content,
                     is_anonymous,
                     created_at,
-                    author_id
+                    author_id,
+                    user_profiles(display_name)
                 `)
                 .order('created_at', { ascending: false });
 
@@ -165,7 +166,20 @@ class PostManager {
 
     createPostElement(post) {
         const date = new Date(post.created_at).toLocaleDateString();
-        const authorText = post.is_anonymous ? 'Anonymous' : 'User';
+
+        // Get display name or fallback to email prefix
+        let authorText = 'Anonymous';
+        if (!post.is_anonymous) {
+            if (post.user_profiles?.display_name) {
+                authorText = post.user_profiles.display_name;
+            } else if (authManager.currentUser?.email) {
+                // Fallback to email prefix if no display name is set
+                authorText = authManager.currentUser.email.split('@')[0];
+            } else {
+                authorText = 'User';
+            }
+        }
+
         const canEdit = !post.is_anonymous && post.author_id === authManager.currentUser?.id;
 
         const likesData = this.likesData[post.id] || { likes: 0, dislikes: 0, userLike: null };

@@ -61,12 +61,33 @@ class ProfileManager {
         try {
             const userDetails = document.getElementById('user-details');
             const email = authManager.currentUser.email;
+            const emailPrefix = email.split('@')[0];
             const createdAt = new Date(authManager.currentUser.created_at).toLocaleDateString();
 
+            // Load user profile
+            const { data: profile, error } = await window.supabase
+                .from('user_profiles')
+                .select('display_name')
+                .eq('user_id', authManager.currentUser.id)
+                .single();
+
+            let displayName = emailPrefix; // Default to email prefix
+            if (profile?.display_name) {
+                displayName = profile.display_name;
+            }
+
             userDetails.innerHTML = `
+                <p><strong>Display Name:</strong> <span id="display-name-text">${displayName}</span>
+                    <button id="edit-name-btn" onclick="profileManager.editDisplayName()">Edit</button>
+                </p>
                 <p><strong>Email:</strong> ${email}</p>
                 <p><strong>Member since:</strong> ${createdAt}</p>
                 <p><strong>Total posts:</strong> <span id="post-count">${this.userPosts.length}</span></p>
+                <div id="name-edit-form" style="display: none; margin-top: 10px;">
+                    <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button onclick="profileManager.saveDisplayName()">Save</button>
+                    <button onclick="profileManager.cancelEditName()">Cancel</button>
+                </div>
             `;
         } catch (error) {
             console.error('Error loading user info:', error);
@@ -188,6 +209,73 @@ class ProfileManager {
         } catch (error) {
             console.error('Error deleting post:', error);
             this.showMessage('Error deleting post', 'error');
+        }
+    }
+
+    editDisplayName() {
+        document.getElementById('display-name-text').style.display = 'none';
+        document.getElementById('edit-name-btn').style.display = 'none';
+        document.getElementById('name-edit-form').style.display = 'block';
+
+        const input = document.getElementById('display-name-input');
+        setTimeout(() => input.focus(), 100);
+    }
+
+    cancelEditName() {
+        document.getElementById('display-name-text').style.display = 'inline';
+        document.getElementById('edit-name-btn').style.display = 'inline';
+        document.getElementById('name-edit-form').style.display = 'none';
+
+        // Reset input value
+        const emailPrefix = authManager.currentUser.email.split('@')[0];
+        document.getElementById('display-name-input').value = document.getElementById('display-name-text').textContent || emailPrefix;
+    }
+
+    async saveDisplayName() {
+        const input = document.getElementById('display-name-input');
+        const newDisplayName = input.value.trim();
+
+        if (!newDisplayName) {
+            this.showMessage('Display name cannot be empty', 'error');
+            return;
+        }
+
+        try {
+            // Check if profile exists
+            const { data: existingProfile, error: fetchError } = await window.supabase
+                .from('user_profiles')
+                .select('*')
+                .eq('user_id', authManager.currentUser.id)
+                .single();
+
+            let result;
+            if (existingProfile) {
+                // Update existing profile
+                result = await window.supabase
+                    .from('user_profiles')
+                    .update({ display_name: newDisplayName })
+                    .eq('user_id', authManager.currentUser.id);
+            } else {
+                // Create new profile
+                result = await window.supabase
+                    .from('user_profiles')
+                    .insert([
+                        {
+                            user_id: authManager.currentUser.id,
+                            display_name: newDisplayName
+                        }
+                    ]);
+            }
+
+            if (result.error) throw result.error;
+
+            // Update the display
+            document.getElementById('display-name-text').textContent = newDisplayName;
+            this.cancelEditName();
+            this.showMessage('Display name updated successfully!', 'success');
+        } catch (error) {
+            console.error('Error updating display name:', error);
+            this.showMessage('Error updating display name', 'error');
         }
     }
 
