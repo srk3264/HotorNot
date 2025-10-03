@@ -80,12 +80,31 @@ class PostManager {
 
     async createPost(content, isAnonymous) {
         try {
+            // Get current display name or email prefix
+            let authorDisplayName = null;
+            if (!isAnonymous) {
+                // Check if user has a display name set
+                const { data: profile, error: profileError } = await window.supabase
+                    .from('user_profiles')
+                    .select('display_name')
+                    .eq('user_id', authManager.currentUser.id)
+                    .single();
+
+                if (profile?.display_name) {
+                    authorDisplayName = profile.display_name;
+                } else {
+                    // Fallback to email prefix
+                    authorDisplayName = authManager.currentUser.email.split('@')[0];
+                }
+            }
+
             const { data, error } = await window.supabase
                 .from('posts')
                 .insert([
                     {
                         content: content,
                         author_id: authManager.currentUser.id,
+                        author_display_name: authorDisplayName,
                         is_anonymous: isAnonymous
                     }
                 ])
@@ -107,6 +126,7 @@ class PostManager {
                     id,
                     content,
                     is_anonymous,
+                    author_display_name,
                     created_at,
                     author_id
                 `)
@@ -116,7 +136,6 @@ class PostManager {
 
             this.posts = data || [];
             await this.loadLikesForPosts();
-            await this.loadUserProfilesForPosts();
             this.displayPosts();
         } catch (error) {
             console.error('Error loading posts:', error);
@@ -186,16 +205,12 @@ class PostManager {
     createPostElement(post) {
         const date = new Date(post.created_at).toLocaleDateString();
 
-        // Get display name or fallback to email prefix
+        // Get display name from stored author_display_name or fallback
         let authorText = 'Anonymous';
         if (!post.is_anonymous) {
-            // Check if we have profile data for this user
-            const userProfile = this.userProfilesData[post.author_id];
-            if (userProfile?.display_name) {
-                authorText = userProfile.display_name;
+            if (post.author_display_name) {
+                authorText = post.author_display_name;
             } else {
-                // Fallback to current user's email prefix for now
-                // In a production app, you'd want to get the actual author's email
                 authorText = 'User';
             }
         }

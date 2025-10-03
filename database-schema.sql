@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS posts (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   content TEXT NOT NULL,
   author_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  author_display_name TEXT,
   is_anonymous BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
