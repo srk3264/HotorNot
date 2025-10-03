@@ -80,10 +80,9 @@ class PostManager {
 
     async createPost(content, isAnonymous) {
         try {
-            // Get current display name or email prefix
+            // Get current display name from user_profiles
             let authorDisplayName = null;
             if (!isAnonymous) {
-                // Check if user has a display name set
                 const { data: profile, error: profileError } = await window.supabase
                     .from('user_profiles')
                     .select('display_name')
@@ -93,7 +92,7 @@ class PostManager {
                 if (profile?.display_name) {
                     authorDisplayName = profile.display_name;
                 } else {
-                    // Fallback to email prefix
+                    // Fallback to email prefix if profile doesn't exist
                     authorDisplayName = authManager.currentUser.email.split('@')[0];
                 }
             }

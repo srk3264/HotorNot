@@ -64,7 +64,7 @@ class ProfileManager {
             const emailPrefix = email.split('@')[0];
             const createdAt = new Date(authManager.currentUser.created_at).toLocaleDateString();
 
-            // Load user profile
+            // Load user profile or create default if doesn't exist
             const { data: profile, error } = await window.supabase
                 .from('user_profiles')
                 .select('display_name')
@@ -72,7 +72,11 @@ class ProfileManager {
                 .single();
 
             let displayName = emailPrefix; // Default to email prefix
-            if (profile?.display_name) {
+
+            if (error && error.code === 'PGRST116') {
+                // Profile doesn't exist, create it with email prefix as default
+                await this.createDefaultProfile(emailPrefix);
+            } else if (profile?.display_name) {
                 displayName = profile.display_name;
             }
 
@@ -91,6 +95,25 @@ class ProfileManager {
             `;
         } catch (error) {
             console.error('Error loading user info:', error);
+        }
+    }
+
+    async createDefaultProfile(emailPrefix) {
+        try {
+            const { error } = await window.supabase
+                .from('user_profiles')
+                .insert([
+                    {
+                        user_id: authManager.currentUser.id,
+                        display_name: emailPrefix
+                    }
+                ]);
+
+            if (error) {
+                console.error('Error creating default profile:', error);
+            }
+        } catch (error) {
+            console.error('Error creating default profile:', error);
         }
     }
 
