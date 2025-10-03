@@ -97,10 +97,40 @@ class PostManager {
             if (error) throw error;
 
             this.posts = data || [];
+            await this.loadLikesForPosts();
             this.displayPosts();
         } catch (error) {
             console.error('Error loading posts:', error);
             this.showMessage('Error loading posts', 'error');
+        }
+    }
+
+    async loadLikesForPosts() {
+        try {
+            // Get all likes for current user's posts
+            const { data: likesData, error } = await window.supabase
+                .from('likes')
+                .select('post_id, like_type, user_id');
+
+            if (error) throw error;
+
+            // Group likes by post_id
+            this.likesData = {};
+            likesData?.forEach(like => {
+                if (!this.likesData[like.post_id]) {
+                    this.likesData[like.post_id] = { likes: 0, dislikes: 0, userLike: null };
+                }
+                if (like.like_type === 'like') {
+                    this.likesData[like.post_id].likes++;
+                } else {
+                    this.likesData[like.post_id].dislikes++;
+                }
+                if (like.user_id === authManager.currentUser?.id) {
+                    this.likesData[like.post_id].userLike = like.like_type;
+                }
+            });
+        } catch (error) {
+            console.error('Error loading likes:', error);
         }
     }
 
@@ -120,6 +150,9 @@ class PostManager {
         const authorText = post.is_anonymous ? 'Anonymous' : 'User';
         const canEdit = !post.is_anonymous && post.author_id === authManager.currentUser?.id;
 
+        const likesData = this.likesData[post.id] || { likes: 0, dislikes: 0, userLike: null };
+        const { likes, dislikes, userLike } = likesData;
+
         return `
             <div class="post" data-id="${post.id}">
                 <div class="post-header">
@@ -127,6 +160,18 @@ class PostManager {
                     <span class="post-date">${date}</span>
                 </div>
                 <div class="post-content">${this.escapeHtml(post.content)}</div>
+
+                <div class="post-interactions">
+                    <div class="like-section">
+                        <button class="like-btn ${userLike === 'like' ? 'active' : ''}" onclick="postManager.likePost('${post.id}', 'like')">
+                            👍 ${likes}
+                        </button>
+                        <button class="dislike-btn ${userLike === 'dislike' ? 'active' : ''}" onclick="postManager.likePost('${post.id}', 'dislike')">
+                            👎 ${dislikes}
+                        </button>
+                    </div>
+                </div>
+
                 ${canEdit ? `
                     <div class="post-actions">
                         <button class="edit-btn" onclick="postManager.editPost('${post.id}')">Edit</button>
@@ -135,6 +180,66 @@ class PostManager {
                 ` : ''}
             </div>
         `;
+    }
+
+    async likePost(postId, likeType) {
+        if (!authManager.currentUser) {
+            this.showMessage('Please log in to like posts', 'error');
+            return;
+        }
+
+        try {
+            // Check if user already liked/disliked this post
+            const { data: existingLike, error: fetchError } = await window.supabase
+                .from('likes')
+                .select('*')
+                .eq('post_id', postId)
+                .eq('user_id', authManager.currentUser.id)
+                .single();
+
+            if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows returned
+                throw fetchError;
+            }
+
+            if (existingLike) {
+                if (existingLike.like_type === likeType) {
+                    // User clicked the same button - remove the like/dislike
+                    const { error: deleteError } = await window.supabase
+                        .from('likes')
+                        .delete()
+                        .eq('id', existingLike.id);
+
+                    if (deleteError) throw deleteError;
+                } else {
+                    // User changed their vote
+                    const { error: updateError } = await window.supabase
+                        .from('likes')
+                        .update({ like_type: likeType })
+                        .eq('id', existingLike.id);
+
+                    if (updateError) throw updateError;
+                }
+            } else {
+                // New like/dislike
+                const { error: insertError } = await window.supabase
+                    .from('likes')
+                    .insert([
+                        {
+                            post_id: postId,
+                            user_id: authManager.currentUser.id,
+                            like_type: likeType
+                        }
+                    ]);
+
+                if (insertError) throw insertError;
+            }
+
+            // Reload posts to update the UI
+            this.loadPosts();
+        } catch (error) {
+            console.error('Error handling like:', error);
+            this.showMessage('Error updating like', 'error');
+        }
     }
 
     async editPost(postId) {

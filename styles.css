@@ -252,6 +252,53 @@ main {
     white-space: pre-wrap;
 }
 
+.post-interactions {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eee;
+}
+
+.like-section {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.like-btn, .dislike-btn {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.like-btn:hover {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.dislike-btn:hover {
+    background: #fce4ec;
+    border-color: #e91e63;
+}
+
+.like-btn.active {
+    background: #2196f3;
+    color: white;
+    border-color: #2196f3;
+}
+
+.dislike-btn.active {
+    background: #e91e63;
+    color: white;
+    border-color: #e91e63;
+}
+
 .post-actions {
     display: flex;
     gap: 0.5rem;
