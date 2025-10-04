@@ -135,6 +135,12 @@ class PostManager {
 
             this.posts = data || [];
             await this.loadLikesForPosts();
+
+            // Ensure current user has a profile
+            if (authManager.currentUser) {
+                await this.ensureUserProfile();
+            }
+
             this.displayPosts();
         } catch (error) {
             console.error('Error loading posts:', error);
@@ -187,6 +193,40 @@ class PostManager {
             });
         } catch (error) {
             console.error('Error loading user profiles:', error);
+        }
+    }
+
+    async ensureUserProfile() {
+        try {
+            // Check if current user has a profile
+            const { data: profile, error } = await window.supabase
+                .from('user_profiles')
+                .select('display_name')
+                .eq('user_id', authManager.currentUser.id)
+                .single();
+
+            if (error && (error.code === 'PGRST116' || error.message.includes('No rows found'))) {
+                // Profile doesn't exist, create it with email prefix as default
+                const emailPrefix = authManager.currentUser.email.split('@')[0];
+                console.log('Creating default profile for user:', authManager.currentUser.id);
+
+                const { error: createError } = await window.supabase
+                    .from('user_profiles')
+                    .insert([
+                        {
+                            user_id: authManager.currentUser.id,
+                            display_name: emailPrefix
+                        }
+                    ]);
+
+                if (createError) {
+                    console.error('Error creating default profile:', createError);
+                } else {
+                    console.log('Default profile created successfully');
+                }
+            }
+        } catch (error) {
+            console.error('Error ensuring user profile:', error);
         }
     }
 
