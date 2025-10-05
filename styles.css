@@ -403,6 +403,10 @@ main {
     word-wrap: break-word;
 }
 
+.post-header {
+    opacity: 0.38;
+}
+
 .post-title {
     align-self: stretch;
     color: rgba(0, 0, 0, 0.87);
