@@ -27,13 +27,11 @@ header {
     align-items: center;
 }
 
-.logo h1 {
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    margin: 0;
-    color: white;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+.logo-image {
+    height: 40px;
+    width: auto;
+    max-width: 150px;
+    object-fit: contain;
 }
 
 nav {
@@ -690,8 +688,9 @@ main {
         text-align: center;
     }
 
-    .logo h1 {
-        font-size: 1.5rem;
+    .logo-image {
+        height: 32px;
+        max-width: 120px;
     }
 
     nav {
