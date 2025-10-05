@@ -165,14 +165,13 @@ class ProfileManager {
 
     async uploadProfilePicture(file) {
         try {
-            // Validate file
-            if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                throw new Error('File size must be less than 5MB');
+            // Validate file using config
+            if (file.size > window.STORAGE_CONFIG.maxFileSize) {
+                throw new Error(`File size must be less than ${Math.round(window.STORAGE_CONFIG.maxFileSize / (1024 * 1024))}MB`);
             }
 
-            // Check file type
-            if (!file.type.startsWith('image/')) {
-                throw new Error('Please select an image file');
+            if (!window.STORAGE_CONFIG.allowedTypes.includes(file.type)) {
+                throw new Error('Please select a valid image file (JPEG, PNG, GIF, or WebP)');
             }
 
             // Show loading state
@@ -181,24 +180,34 @@ class ProfileManager {
             uploadBtn.textContent = 'Uploading...';
             uploadBtn.disabled = true;
 
-            // Create unique filename
+            // Create unique filename with user ID folder structure
             const fileExt = file.name.split('.').pop();
-            const fileName = `${authManager.currentUser.id}_${Date.now()}.${fileExt}`;
+            const timestamp = Date.now();
+            const fileName = `${authManager.currentUser.id}/${authManager.currentUser.id}_${timestamp}.${fileExt}`;
+
+            console.log('Uploading file:', fileName, 'to bucket:', window.STORAGE_CONFIG.bucket);
 
             // Upload to Supabase Storage
             const { data, error } = await window.supabase.storage
-                .from('DPs')
+                .from(window.STORAGE_CONFIG.bucket)
                 .upload(fileName, file, {
                     cacheControl: '3600',
-                    upsert: false
+                    upsert: true // Allow overwriting existing files
                 });
 
-            if (error) throw error;
+            if (error) {
+                console.error('Storage upload error:', error);
+                throw new Error(`Upload failed: ${error.message}`);
+            }
+
+            console.log('Upload successful:', data);
 
             // Get public URL
             const { data: urlData } = window.supabase.storage
-                .from('DPs')
+                .from(window.STORAGE_CONFIG.bucket)
                 .getPublicUrl(fileName);
+
+            console.log('Generated URL:', urlData.publicUrl);
 
             // Update both tables
             await this.updateProfilePictureUrl(urlData.publicUrl);
@@ -213,8 +222,10 @@ class ProfileManager {
 
             // Reset upload button
             const uploadBtn = document.getElementById('upload-picture-btn');
-            uploadBtn.textContent = 'Upload Picture';
-            uploadBtn.disabled = false;
+            if (uploadBtn) {
+                uploadBtn.textContent = 'Upload Picture';
+                uploadBtn.disabled = false;
+            }
 
             throw error;
         }
