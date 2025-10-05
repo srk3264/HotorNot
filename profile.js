@@ -165,6 +165,15 @@ class ProfileManager {
 
     async uploadProfilePicture(file) {
         try {
+            // Define storage config if not available
+            if (!window.STORAGE_CONFIG) {
+                window.STORAGE_CONFIG = {
+                    bucket: 'DPs',
+                    maxFileSize: 5 * 1024 * 1024, // 5MB
+                    allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+                };
+            }
+
             // Validate file using config
             if (file.size > window.STORAGE_CONFIG.maxFileSize) {
                 throw new Error(`File size must be less than ${Math.round(window.STORAGE_CONFIG.maxFileSize / (1024 * 1024))}MB`);
