@@ -500,5 +500,28 @@ function toggleAnonymous() {
     postManager.updateToggleUI();
 }
 
+// Navbar menu functions
+function toggleNavMenu() {
+    const dropdown = document.getElementById('nav-menu-dropdown');
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function goToProfile() {
+    window.location.href = 'profile.html';
+    toggleNavMenu(); // Close dropdown after navigation
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('nav-menu-dropdown');
+    const toggle = document.querySelector('.nav-menu-toggle');
+
+    if (dropdown && toggle && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+
 // Initialize post manager
 const postManager = new PostManager();
