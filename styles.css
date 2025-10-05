@@ -534,23 +534,25 @@ main {
 
 
 .like-btn.active {
-    background: #2196f3;
+    background: #EC6B15;
     color: white;
-    border-color: #2196f3;
+    border-color: #EC6B15;
 }
 
 .like-btn.active .icon svg {
-    stroke: white;
+    fill: white;
+    stroke: none;
 }
 
 .dislike-btn.active {
-    background: #e91e63;
+    background: black;
     color: white;
-    border-color: #e91e63;
+    border-color: black;
 }
 
 .dislike-btn.active .icon svg {
-    stroke: white;
+    fill: white;
+    stroke: none;
 }
 
 .post-actions {
