@@ -34,11 +34,30 @@ class ProfileManager {
                 this.showAuthSection();
             }
         });
+
+        // Set up profile picture upload event listener
+        this.setupProfilePictureUpload();
     }
 
     setupNavigation() {
         // Navigation is now handled by the dropdown menu
         // No need for individual button event listeners
+    }
+
+    setupProfilePictureUpload() {
+        // Profile picture upload event listener
+        document.getElementById('profile-picture-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    const imageUrl = await this.uploadProfilePicture(file);
+                    this.displayProfilePicture(imageUrl);
+                    this.showMessage('Profile picture updated successfully!', 'success');
+                } catch (error) {
+                    this.showMessage(error.message || 'Error uploading profile picture', 'error');
+                }
+            }
+        });
     }
 
     showProfileContent() {
@@ -56,16 +75,16 @@ class ProfileManager {
             const userDetails = document.getElementById('user-details');
             const email = authManager.currentUser.email;
             const emailPrefix = email.split('@')[0];
-            const createdAt = new Date(authManager.currentUser.created_at).toLocaleDateString();
 
             // Load user profile or create default if doesn't exist
             const { data: profile, error } = await window.supabase
                 .from('user_profiles')
-                .select('display_name')
+                .select('display_name, profile_picture_url')
                 .eq('user_id', authManager.currentUser.id)
                 .single();
 
             let displayName = emailPrefix; // Default to email prefix
+            let profilePictureUrl = null;
 
             if (error) {
                 if (error.code === 'PGRST116' || error.message.includes('No rows found')) {
@@ -80,8 +99,18 @@ class ProfileManager {
                 } else {
                     console.error('Error loading profile:', error);
                 }
-            } else if (profile?.display_name) {
-                displayName = profile.display_name;
+            } else {
+                if (profile?.display_name) {
+                    displayName = profile.display_name;
+                }
+                profilePictureUrl = profile?.profile_picture_url || null;
+            }
+
+            // Load profile picture
+            if (profilePictureUrl) {
+                this.displayProfilePicture(profilePictureUrl);
+            } else {
+                this.showDefaultAvatar(emailPrefix);
             }
 
             // Calculate hotness (sum of all likes on user's posts)
@@ -119,7 +148,8 @@ class ProfileManager {
                 .insert([
                     {
                         user_id: authManager.currentUser.id,
-                        display_name: emailPrefix
+                        display_name: emailPrefix,
+                        profile_picture_url: null
                     }
                 ]);
 
@@ -132,6 +162,112 @@ class ProfileManager {
         } catch (error) {
             console.error('Error creating default profile:', error);
             return { success: false, error };
+        }
+    }
+
+    displayProfilePicture(imageUrl) {
+        const img = document.getElementById('profile-picture-img');
+        const placeholder = document.getElementById('profile-picture-placeholder');
+
+        img.src = imageUrl;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    }
+
+    showDefaultAvatar(emailPrefix) {
+        const img = document.getElementById('profile-picture-img');
+        const placeholder = document.getElementById('profile-picture-placeholder');
+
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+
+        // Show user initial
+        const initial = emailPrefix.charAt(0).toUpperCase();
+        placeholder.innerHTML = `<span style="font-size: 2.5rem; font-weight: bold; color: white;">${initial}</span>`;
+    }
+
+    async uploadProfilePicture(file) {
+        try {
+            // Validate file
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                throw new Error('File size must be less than 5MB');
+            }
+
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                throw new Error('Please select an image file');
+            }
+
+            // Show loading state
+            const uploadBtn = document.getElementById('upload-picture-btn');
+            const originalText = uploadBtn.textContent;
+            uploadBtn.textContent = 'Uploading...';
+            uploadBtn.disabled = true;
+
+            // Create unique filename
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${authManager.currentUser.id}_${Date.now()}.${fileExt}`;
+
+            // Upload to Supabase Storage
+            const { data, error } = await window.supabase.storage
+                .from('DPs')
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+            if (error) throw error;
+
+            // Get public URL
+            const { data: urlData } = window.supabase.storage
+                .from('DPs')
+                .getPublicUrl(fileName);
+
+            // Update both tables
+            await this.updateProfilePictureUrl(urlData.publicUrl);
+
+            // Reset upload button
+            uploadBtn.textContent = originalText;
+            uploadBtn.disabled = false;
+
+            return urlData.publicUrl;
+        } catch (error) {
+            console.error('Error uploading profile picture:', error);
+
+            // Reset upload button
+            const uploadBtn = document.getElementById('upload-picture-btn');
+            uploadBtn.textContent = 'Upload Picture';
+            uploadBtn.disabled = false;
+
+            throw error;
+        }
+    }
+
+    async updateProfilePictureUrl(imageUrl) {
+        try {
+            // Update user_profiles table
+            const { error: profileError } = await window.supabase
+                .from('user_profiles')
+                .upsert({
+                    user_id: authManager.currentUser.id,
+                    profile_picture_url: imageUrl
+                });
+
+            if (profileError) throw profileError;
+
+            // Update all existing posts by this user (due to trigger)
+            const { error: postsError } = await window.supabase
+                .from('posts')
+                .update({ author_profile_picture_url: imageUrl })
+                .eq('author_id', authManager.currentUser.id);
+
+            if (postsError) {
+                console.error('Error updating posts with profile picture:', postsError);
+                // Don't throw error since profile update succeeded
+            }
+        } catch (error) {
+            console.error('Error updating profile picture URL:', error);
+            throw error;
         }
     }
 

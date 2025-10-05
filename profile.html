@@ -38,6 +38,19 @@
         <div id="profile-content" style="display: none;">
             <section id="user-info">
                 <div id="user-details">
+                    <div class="profile-picture-container">
+                        <div class="profile-picture-circle" onclick="document.getElementById('profile-picture-input').click()">
+                            <img id="profile-picture-img" src="" alt="Profile Picture" style="display: none;">
+                            <div class="profile-picture-placeholder" id="profile-picture-placeholder" style="display: block;">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="file" id="profile-picture-input" accept="image/*" style="display: none;">
+                        <button id="upload-picture-btn" class="upload-picture-btn" onclick="document.getElementById('profile-picture-input').click()">Upload Picture</button>
+                    </div>
                     <!-- User info will be loaded here -->
                 </div>
             </section>

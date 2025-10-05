@@ -81,12 +81,14 @@ class PostManager {
 
     async createPost(content, isAnonymous) {
         try {
-            // Get current display name from user_profiles
+            // Get current display name and profile picture from user_profiles
             let authorDisplayName = null;
+            let authorProfilePictureUrl = null;
+
             if (!isAnonymous) {
                 const { data: profile, error: profileError } = await window.supabase
                     .from('user_profiles')
-                    .select('display_name')
+                    .select('display_name, profile_picture_url')
                     .eq('user_id', authManager.currentUser.id)
                     .single();
 
@@ -96,6 +98,8 @@ class PostManager {
                     // Fallback to email prefix if profile doesn't exist
                     authorDisplayName = authManager.currentUser.email.split('@')[0];
                 }
+
+                authorProfilePictureUrl = profile?.profile_picture_url || null;
             }
 
             const { data, error } = await window.supabase
@@ -105,6 +109,7 @@ class PostManager {
                         content: content,
                         author_id: authManager.currentUser.id,
                         author_display_name: authorDisplayName,
+                        author_profile_picture_url: authorProfilePictureUrl,
                         is_anonymous: isAnonymous
                     }
                 ])
@@ -128,7 +133,8 @@ class PostManager {
                     is_anonymous,
                     author_display_name,
                     created_at,
-                    author_id
+                    author_id,
+                    author_profile_picture_url
                 `)
                 .order('created_at', { ascending: false });
 
@@ -269,7 +275,13 @@ class PostManager {
             <div class="post-card" data-id="${post.id}">
                 <div class="post-header">
                     <div class="post-avatar">
-                        <div class="avatar-circle">${post.is_anonymous ? '👤' : '👤'}</div>
+                        ${post.is_anonymous ?
+                            `<div class="avatar-circle">👤</div>` :
+                            (post.author_profile_picture_url ?
+                                `<img src="${post.author_profile_picture_url}" alt="${authorText}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">` :
+                                `<div class="avatar-circle">${authorText.charAt(0).toUpperCase()}</div>`
+                            )
+                        }
                     </div>
                     <div class="post-user-info">
                         <span class="post-username">${authorText}</span>
