@@ -106,18 +106,12 @@ class ProfileManager {
                 profilePictureUrl = profile?.profile_picture_url || null;
             }
 
-            // Load profile picture FIRST before updating HTML
-            if (profilePictureUrl) {
-                this.displayProfilePicture(profilePictureUrl);
-            } else {
-                this.showDefaultAvatar(emailPrefix);
-            }
-
             // Calculate hotness (sum of all likes on user's posts)
             const hotness = await this.calculateHotness();
 
-            // Update text content without rebuilding HTML structure
-            this.updateUserInfoDisplay(displayName, hotness);
+            // Handle profile picture and text separately to avoid interference
+            this.handleProfilePictureSeparately(profilePictureUrl, emailPrefix);
+            this.handleTextContentSeparately(displayName, hotness);
 
         } catch (error) {
             console.error('Error loading user info:', error);
@@ -254,39 +248,56 @@ class ProfileManager {
         }
     }
 
-    updateUserInfoDisplay(displayName, hotness) {
-        // Find the user-details container
+    handleProfilePictureSeparately(profilePictureUrl, emailPrefix) {
+        // Handle ONLY the profile picture, don't touch text elements
+        if (profilePictureUrl) {
+            this.displayProfilePicture(profilePictureUrl);
+        } else {
+            this.showDefaultAvatar(emailPrefix);
+        }
+    }
+
+    handleTextContentSeparately(displayName, hotness) {
+        // Handle ONLY the text content, don't touch profile picture
         const userDetails = document.getElementById('user-details');
         if (!userDetails) return;
 
-        // Check if we need to create the text elements
+        // Check if text elements exist
         let nameText = document.getElementById('display-name-text');
         let hotnessCount = document.getElementById('hotness-count');
 
         if (!nameText || !hotnessCount) {
-            // Create the text elements structure
-            userDetails.innerHTML = `
-                <div style="text-align: center;">
-                    <p style="margin: 0; font-size: 1.2rem; font-weight: 600; color: #333; margin-bottom: 0.5rem;">
-                        <span id="display-name-text">${displayName}</span>
-                        <button id="edit-name-btn" onclick="profileManager.editDisplayName()" style="margin-left: 8px; padding: 4px 8px; font-size: 0.8rem;">Edit</button>
-                    </p>
-                    <p style="margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; color: #ff6b35;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame">
-                            <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>
-                        </svg>
-                        <span style="font-weight: 500; font-size: 1rem; margin-right: 4px;">Hotness Score</span>
-                        <span id="hotness-count" style="font-weight: 600; font-size: 1.1rem;">${hotness}</span>
-                    </p>
-                    <div id="name-edit-form" style="display: none; margin-top: 1rem;">
-                        <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                        <button onclick="profileManager.saveDisplayName()">Save</button>
-                        <button onclick="profileManager.cancelEditName()">Cancel</button>
-                    </div>
+            // Create text structure if it doesn't exist
+            const textContainer = document.createElement('div');
+            textContainer.style.textAlign = 'center';
+            textContainer.innerHTML = `
+                <p style="margin: 0; font-size: 1.2rem; font-weight: 600; color: #333; margin-bottom: 0.5rem;">
+                    <span id="display-name-text">${displayName}</span>
+                    <button id="edit-name-btn" onclick="profileManager.editDisplayName()" style="margin-left: 8px; padding: 4px 8px; font-size: 0.8rem;">Edit</button>
+                </p>
+                <p style="margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; color: #ff6b35;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame">
+                        <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>
+                    </svg>
+                    <span style="font-weight: 500; font-size: 1rem; margin-right: 4px;">Hotness Score</span>
+                    <span id="hotness-count" style="font-weight: 600; font-size: 1.1rem;">${hotness}</span>
+                </p>
+                <div id="name-edit-form" style="display: none; margin-top: 1rem;">
+                    <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button onclick="profileManager.saveDisplayName()">Save</button>
+                    <button onclick="profileManager.cancelEditName()">Cancel</button>
                 </div>
             `;
+
+            // Insert after the profile picture container
+            const profilePictureContainer = userDetails.querySelector('.profile-picture-container');
+            if (profilePictureContainer) {
+                userDetails.insertBefore(textContainer, profilePictureContainer.nextSibling);
+            } else {
+                userDetails.appendChild(textContainer);
+            }
         } else {
-            // Just update the text content of existing elements
+            // Just update existing text content
             nameText.textContent = displayName;
             hotnessCount.textContent = hotness;
         }
