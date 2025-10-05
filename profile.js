@@ -88,9 +88,6 @@ class ProfileManager {
                 <p><strong>Display Name:</strong> <span id="display-name-text">${displayName}</span>
                     <button id="edit-name-btn" onclick="profileManager.editDisplayName()">Edit</button>
                 </p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Member since:</strong> ${createdAt}</p>
-                <p><strong>Total posts:</strong> <span id="post-count">${this.userPosts.length}</span></p>
                 <div id="name-edit-form" style="display: none; margin-top: 10px;">
                     <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     <button onclick="profileManager.saveDisplayName()">Save</button>
