@@ -489,14 +489,14 @@ main {
     background: white;
     border-radius: 8px;
     border: 1px rgba(0, 0, 0, 0.12) solid;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     display: inline-flex;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 64px;
+    min-height: 48px;
     position: relative;
     color: rgba(0, 0, 0, 0.38);
     font-size: 14px;
@@ -518,8 +518,8 @@ main {
 /* Like/Dislike Icons - SVG Styling */
 .like-btn .icon,
 .dislike-btn .icon {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -527,8 +527,8 @@ main {
 
 .like-btn .icon svg,
 .dislike-btn .icon svg {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
 }
 
 
