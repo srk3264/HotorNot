@@ -10,24 +10,10 @@
 </head>
 <body>
     <header>
-        <div class="logo">
-            <img src="images/logo.png" alt="HotorNot" class="logo-image">
-        </div>
+        <h1>My Profile</h1>
         <nav>
             <button id="home-btn">Home</button>
-            <div class="nav-menu">
-                <button class="nav-menu-toggle" onclick="toggleNavMenu()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="1"/>
-                        <circle cx="12" cy="5" r="1"/>
-                        <circle cx="12" cy="19" r="1"/>
-                    </svg>
-                </button>
-                <div class="nav-menu-dropdown" id="nav-menu-dropdown">
-                    <button onclick="goToHome()">Home</button>
-                    <button onclick="authManager.signOut()">Logout</button>
-                </div>
-            </div>
+            <button id="logout-btn">Logout</button>
         </nav>
     </header>
 
