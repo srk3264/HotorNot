@@ -15,8 +15,20 @@
         </div>
         <nav>
             <button id="auth-btn">Login</button>
-            <button id="profile-btn" style="display: none;">Profile</button>
-            <button id="logout-btn" style="display: none;">Logout</button>
+            <div class="nav-dropdown" style="display: none;">
+                <button class="nav-dropdown-toggle" onclick="toggleNavDropdown()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="1"/>
+                        <circle cx="12" cy="5" r="1"/>
+                        <circle cx="12" cy="19" r="1"/>
+                    </svg>
+                </button>
+                <div class="nav-dropdown-menu" id="nav-dropdown-menu">
+                    <button onclick="goToProfile()">Profile</button>
+                    <button onclick="goToHome()">Home</button>
+                    <button onclick="authManager.signOut()">Logout</button>
+                </div>
+            </div>
         </nav>
     </header>
 
