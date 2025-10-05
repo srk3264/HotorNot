@@ -515,61 +515,61 @@ main {
     border-color: #e91e63;
 }
 
-/* Like/Dislike Icons */
+/* Like/Dislike Icons - Thumbs Up/Down Style */
 .like-btn .icon,
 .dislike-btn .icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+/* Thumbs Up Icon */
 .like-btn .icon::before {
     content: '';
-    width: 14px;
+    width: 8px;
     height: 12px;
-    border: 2px solid rgba(0, 0, 0, 0.38);
-    border-top: none;
-    border-right: none;
-    transform: rotate(-45deg);
-    border-radius: 2px 0 0 0;
+    background: rgba(0, 0, 0, 0.38);
+    border-radius: 4px 4px 2px 2px;
     position: relative;
+    transform: rotate(-15deg);
 }
 
 .like-btn .icon::after {
     content: '';
-    width: 6px;
-    height: 2px;
+    width: 4px;
+    height: 8px;
     background: rgba(0, 0, 0, 0.38);
+    border-radius: 2px;
     position: absolute;
-    right: 0;
-    top: 2px;
+    right: 2px;
+    top: 1px;
     transform: rotate(45deg);
 }
 
+/* Thumbs Down Icon */
 .dislike-btn .icon::before {
     content: '';
-    width: 14px;
+    width: 8px;
     height: 12px;
-    border: 2px solid rgba(0, 0, 0, 0.38);
-    border-top: none;
-    border-right: none;
-    transform: rotate(-45deg);
-    border-radius: 2px 0 0 0;
+    background: rgba(0, 0, 0, 0.38);
+    border-radius: 2px 2px 4px 4px;
     position: relative;
+    transform: rotate(15deg);
 }
 
 .dislike-btn .icon::after {
     content: '';
-    width: 6px;
-    height: 2px;
+    width: 4px;
+    height: 8px;
     background: rgba(0, 0, 0, 0.38);
+    border-radius: 2px;
     position: absolute;
-    right: 0;
-    top: 2px;
-    transform: rotate(135deg);
+    right: 2px;
+    bottom: 1px;
+    transform: rotate(-45deg);
 }
 
 .like-btn.active {
@@ -579,9 +579,7 @@ main {
 }
 
 .like-btn.active .icon::before {
-    border-color: white;
-    border-top: none;
-    border-right: none;
+    background: white;
 }
 
 .like-btn.active .icon::after {
@@ -595,9 +593,7 @@ main {
 }
 
 .dislike-btn.active .icon::before {
-    border-color: white;
-    border-top: none;
-    border-right: none;
+    background: white;
 }
 
 .dislike-btn.active .icon::after {
