@@ -270,9 +270,8 @@ main {
     gap: 40px;
     display: inline-flex;
     margin-bottom: 1.5rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     position: relative;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 .post-card:hover {
