@@ -88,19 +88,22 @@ class ProfileManager {
             const hotness = await this.calculateHotness();
 
             userDetails.innerHTML = `
-                <p><strong>Display Name:</strong> <span id="display-name-text">${displayName}</span>
-                    <button id="edit-name-btn" onclick="profileManager.editDisplayName()">Edit</button>
-                </p>
-                <p><strong>Hotness:</strong>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame" style="color: #ff6b35; vertical-align: middle; margin-right: 8px;">
-                        <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>
-                    </svg>
-                    <span id="hotness-count" style="color: #ff6b35; font-weight: 600;">${hotness}</span>
-                </p>
-                <div id="name-edit-form" style="display: none; margin-top: 10px;">
-                    <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <button onclick="profileManager.saveDisplayName()">Save</button>
-                    <button onclick="profileManager.cancelEditName()">Cancel</button>
+                <div style="text-align: center;">
+                    <p style="margin: 0; font-size: 1.2rem; font-weight: 600; color: #333; margin-bottom: 0.5rem;">
+                        <span id="display-name-text">${displayName}</span>
+                        <button id="edit-name-btn" onclick="profileManager.editDisplayName()" style="margin-left: 8px; padding: 4px 8px; font-size: 0.8rem;">Edit</button>
+                    </p>
+                    <p style="margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; color: #ff6b35;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame">
+                            <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>
+                        </svg>
+                        <span id="hotness-count" style="font-weight: 600; font-size: 1.1rem;">${hotness}</span>
+                    </p>
+                    <div id="name-edit-form" style="display: none; margin-top: 1rem;">
+                        <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <button onclick="profileManager.saveDisplayName()">Save</button>
+                        <button onclick="profileManager.cancelEditName()">Cancel</button>
+                    </div>
                 </div>
             `;
         } catch (error) {
