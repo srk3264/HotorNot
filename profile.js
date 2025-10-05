@@ -335,13 +335,18 @@ class ProfileManager {
     handleTextContentSeparately(displayName, hotness) {
         // Handle ONLY the text content, don't touch profile picture
         const userDetails = document.getElementById('user-details');
-        if (!userDetails) return;
+        if (!userDetails) {
+            console.error('User details container not found');
+            return;
+        }
 
         // Check if text elements exist
         let nameText = document.getElementById('display-name-text');
         let hotnessCount = document.getElementById('hotness-count');
 
         if (!nameText || !hotnessCount) {
+            console.log('Creating text elements for:', displayName, 'hotness:', hotness);
+
             // Create text structure if it doesn't exist
             const textContainer = document.createElement('div');
             textContainer.style.textAlign = 'center';
@@ -370,11 +375,14 @@ class ProfileManager {
             const profilePictureContainer = userDetails.querySelector('.profile-picture-container');
             if (profilePictureContainer) {
                 userDetails.insertBefore(textContainer, profilePictureContainer.nextSibling);
+                console.log('Text container inserted after profile picture container');
             } else {
                 userDetails.appendChild(textContainer);
+                console.log('Text container appended to user details');
             }
         } else {
             // Just update existing text content
+            console.log('Updating existing text content');
             nameText.textContent = displayName;
             hotnessCount.textContent = hotness;
         }
