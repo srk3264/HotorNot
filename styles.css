@@ -685,7 +685,7 @@ main {
 /* Responsive design */
 @media (max-width: 600px) {
     header {
-        flex-direction: column;
+        flex-direction: row;
         gap: 1rem;
         text-align: center;
     }
