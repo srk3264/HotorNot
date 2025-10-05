@@ -388,12 +388,19 @@ class ProfileManager {
 
             // Insert after the profile picture container
             const profilePictureContainer = userDetails.querySelector('.profile-picture-container');
-            if (profilePictureContainer) {
-                userDetails.insertBefore(textContainer, profilePictureContainer.nextSibling);
-                console.log('Text container inserted after profile picture container');
+            if (profilePictureContainer && profilePictureContainer.parentNode === userDetails) {
+                // Find the correct insertion point
+                const nextSibling = profilePictureContainer.nextSibling;
+                if (nextSibling) {
+                    userDetails.insertBefore(textContainer, nextSibling);
+                    console.log('Text container inserted before next sibling');
+                } else {
+                    userDetails.appendChild(textContainer);
+                    console.log('Text container appended as last child');
+                }
             } else {
                 userDetails.appendChild(textContainer);
-                console.log('Text container appended to user details');
+                console.log('Text container appended (no valid profile picture container)');
             }
         } else {
             // Just update existing text content
