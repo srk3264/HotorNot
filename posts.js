@@ -500,33 +500,5 @@ function toggleAnonymous() {
     postManager.updateToggleUI();
 }
 
-// Navbar dropdown functions
-function toggleNavDropdown() {
-    const dropdown = document.getElementById('nav-dropdown-menu');
-    if (dropdown) {
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-    }
-}
-
-function goToProfile() {
-    window.location.href = 'profile.html';
-    toggleNavDropdown(); // Close dropdown after navigation
-}
-
-function goToHome() {
-    window.location.href = 'index.html';
-    toggleNavDropdown(); // Close dropdown after navigation
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('nav-dropdown-menu');
-    const toggle = document.querySelector('.nav-dropdown-toggle');
-
-    if (dropdown && toggle && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
-        dropdown.style.display = 'none';
-    }
-});
-
 // Initialize post manager
 const postManager = new PostManager();
