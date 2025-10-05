@@ -242,6 +242,18 @@ class ProfileManager {
 
     async updateProfilePictureUrl(imageUrl) {
         try {
+            // Get current profile picture URL before updating
+            const { data: currentProfile, error: fetchError } = await window.supabase
+                .from('user_profiles')
+                .select('profile_picture_url')
+                .eq('user_id', authManager.currentUser.id)
+                .single();
+
+            let oldImageUrl = null;
+            if (currentProfile?.profile_picture_url && currentProfile.profile_picture_url !== imageUrl) {
+                oldImageUrl = currentProfile.profile_picture_url;
+            }
+
             // First try to update existing profile
             const { error: updateError } = await window.supabase
                 .from('user_profiles')
@@ -263,6 +275,11 @@ class ProfileManager {
                 throw updateError;
             }
 
+            // Delete old image file from storage if it exists
+            if (oldImageUrl) {
+                await this.deleteOldProfilePicture(oldImageUrl);
+            }
+
             // Update all existing posts by this user (due to trigger)
             const { error: postsError } = await window.supabase
                 .from('posts')
@@ -276,6 +293,33 @@ class ProfileManager {
         } catch (error) {
             console.error('Error updating profile picture URL:', error);
             throw error;
+        }
+    }
+
+    async deleteOldProfilePicture(oldImageUrl) {
+        try {
+            // Extract filename from URL
+            const urlParts = oldImageUrl.split('/');
+            const filename = urlParts[urlParts.length - 1];
+
+            if (filename && filename !== 'placeholder') {
+                console.log('Deleting old profile picture:', filename);
+
+                // Delete from storage
+                const { error: deleteError } = await window.supabase.storage
+                    .from(window.STORAGE_CONFIG.bucket)
+                    .remove([`${authManager.currentUser.id}/${filename}`]);
+
+                if (deleteError) {
+                    console.error('Error deleting old profile picture:', deleteError);
+                    // Don't throw error since this is cleanup
+                } else {
+                    console.log('Old profile picture deleted successfully');
+                }
+            }
+        } catch (error) {
+            console.error('Error in deleteOldProfilePicture:', error);
+            // Don't throw error since this is cleanup
         }
     }
 
