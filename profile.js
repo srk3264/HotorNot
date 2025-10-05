@@ -160,13 +160,21 @@ class ProfileManager {
         const time = new Date(post.created_at).toLocaleTimeString();
         const anonymousBadge = post.is_anonymous ? '<span class="anonymous-badge">Anonymous</span>' : '';
 
+        // Parse content to separate title and description (same as main feed)
+        const contentLines = post.content.split('\n');
+        const title = contentLines[0]?.substring(0, 50) + (contentLines[0]?.length > 50 ? '...' : '') || 'Untitled';
+        const description = contentLines.slice(1).join('\n') || '';
+
         return `
             <div class="post" data-id="${post.id}">
                 <div class="post-header">
                     <span class="post-date">${date} at ${time}</span>
                     ${anonymousBadge}
                 </div>
-                <div class="post-content">${this.escapeHtml(post.content)}</div>
+                <div class="post-main">
+                    <h3 class="post-title">${this.escapeHtml(title)}</h3>
+                    ${description ? `<p class="post-description">${this.escapeHtml(description)}</p>` : ''}
+                </div>
                 <div class="post-actions">
                     <button class="edit-btn" onclick="profileManager.editPost('${post.id}')" title="Edit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil">
