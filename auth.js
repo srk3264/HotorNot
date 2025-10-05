@@ -72,8 +72,7 @@ class AuthManager {
         const authSection = document.getElementById('auth-section');
         const mainContent = document.getElementById('main-content');
         const authBtn = document.getElementById('auth-btn');
-        const profileBtn = document.getElementById('profile-btn');
-        const logoutBtn = document.getElementById('logout-btn');
+        const navMenu = document.querySelector('.nav-menu');
         const createPostSection = document.getElementById('create-post');
 
         if (this.currentUser) {
@@ -81,16 +80,14 @@ class AuthManager {
             authSection.style.display = 'none';
             mainContent.style.display = 'block';
             authBtn.style.display = 'none';
-            profileBtn.style.display = 'inline';
-            logoutBtn.style.display = 'inline';
+            if (navMenu) navMenu.style.display = 'flex';
             createPostSection.style.display = 'block';
         } else {
             // User is not logged in
             authSection.style.display = 'block';
             mainContent.style.display = 'none';
             authBtn.style.display = 'inline';
-            profileBtn.style.display = 'none';
-            logoutBtn.style.display = 'none';
+            if (navMenu) navMenu.style.display = 'none';
             createPostSection.style.display = 'none';
         }
     }
@@ -194,9 +191,3 @@ const authManager = new AuthManager();
 
 // Event listeners for header buttons
 document.getElementById('auth-btn').onclick = () => authManager.showAuthModal();
-document.getElementById('logout-btn').onclick = async () => {
-    await authManager.signOut();
-};
-document.getElementById('profile-btn').onclick = () => {
-    window.location.href = 'profile.html';
-};
