@@ -748,6 +748,72 @@ main {
     padding: 1rem;
     border-radius: 8px;
     border: 1px solid #000000;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#user-posts-container .post:hover .post-actions {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+#user-posts-container .post .post-actions {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    display: flex;
+    gap: 0.25rem;
+    z-index: 10;
+}
+
+#user-posts-container .post .edit-btn,
+#user-posts-container .post .delete-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#user-posts-container .post .edit-btn {
+    color: #f39c12;
+    border-color: #f39c12;
+}
+
+#user-posts-container .post .edit-btn:hover {
+    background: #f39c12;
+    color: white;
+    border-color: #e67e22;
+}
+
+#user-posts-container .post .delete-btn {
+    color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+#user-posts-container .post .delete-btn:hover {
+    background: #e74c3c;
+    color: white;
+    border-color: #c0392b;
+}
+
+#user-posts-container .post .edit-btn svg,
+#user-posts-container .post .delete-btn svg {
+    width: 16px;
+    height: 16px;
 }
 
 .anonymous-badge {
