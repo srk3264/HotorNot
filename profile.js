@@ -72,9 +72,16 @@ class ProfileManager {
 
     async loadUserInfo() {
         try {
+            console.log('Starting loadUserInfo...');
             const userDetails = document.getElementById('user-details');
+            if (!userDetails) {
+                console.error('user-details container not found!');
+                return;
+            }
+
             const email = authManager.currentUser.email;
             const emailPrefix = email.split('@')[0];
+            console.log('Email prefix:', emailPrefix);
 
             // Load user profile or create default if doesn't exist
             const { data: profile, error } = await window.supabase
@@ -106,13 +113,21 @@ class ProfileManager {
                 profilePictureUrl = profile?.profile_picture_url || null;
             }
 
+            console.log('Display name:', displayName);
+            console.log('Profile picture URL:', profilePictureUrl);
+
             // Calculate hotness (sum of all likes on user's posts)
             const hotness = await this.calculateHotness();
+            console.log('Calculated hotness:', hotness);
 
             // Handle profile picture and text separately to avoid interference
+            console.log('Calling handleProfilePictureSeparately...');
             this.handleProfilePictureSeparately(profilePictureUrl, emailPrefix);
+
+            console.log('Calling handleTextContentSeparately...');
             this.handleTextContentSeparately(displayName, hotness);
 
+            console.log('loadUserInfo completed successfully');
         } catch (error) {
             console.error('Error loading user info:', error);
         }
