@@ -242,15 +242,26 @@ class ProfileManager {
 
     async updateProfilePictureUrl(imageUrl) {
         try {
-            // Update user_profiles table
-            const { error: profileError } = await window.supabase
+            // First try to update existing profile
+            const { error: updateError } = await window.supabase
                 .from('user_profiles')
-                .upsert({
-                    user_id: authManager.currentUser.id,
-                    profile_picture_url: imageUrl
-                });
+                .update({ profile_picture_url: imageUrl })
+                .eq('user_id', authManager.currentUser.id);
 
-            if (profileError) throw profileError;
+            if (updateError && updateError.code === 'PGRST116') {
+                // Profile doesn't exist, create it
+                console.log('Profile not found, creating new profile');
+                const { error: insertError } = await window.supabase
+                    .from('user_profiles')
+                    .insert({
+                        user_id: authManager.currentUser.id,
+                        profile_picture_url: imageUrl
+                    });
+
+                if (insertError) throw insertError;
+            } else if (updateError) {
+                throw updateError;
+            }
 
             // Update all existing posts by this user (due to trigger)
             const { error: postsError } = await window.supabase
