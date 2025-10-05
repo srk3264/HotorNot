@@ -106,7 +106,7 @@ class ProfileManager {
                 profilePictureUrl = profile?.profile_picture_url || null;
             }
 
-            // Load profile picture
+            // Load profile picture FIRST before updating HTML
             if (profilePictureUrl) {
                 this.displayProfilePicture(profilePictureUrl);
             } else {
@@ -116,26 +116,9 @@ class ProfileManager {
             // Calculate hotness (sum of all likes on user's posts)
             const hotness = await this.calculateHotness();
 
-            userDetails.innerHTML = `
-                <div style="text-align: center;">
-                    <p style="margin: 0; font-size: 1.2rem; font-weight: 600; color: #333; margin-bottom: 0.5rem;">
-                        <span id="display-name-text">${displayName}</span>
-                        <button id="edit-name-btn" onclick="profileManager.editDisplayName()" style="margin-left: 8px; padding: 4px 8px; font-size: 0.8rem;">Edit</button>
-                    </p>
-                    <p style="margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; color: #ff6b35;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame">
-                            <path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/>
-                        </svg>
-                        <span style="font-weight: 500; font-size: 1rem; margin-right: 4px;">Hotness Score</span>
-                        <span id="hotness-count" style="font-weight: 600; font-size: 1.1rem;">${hotness}</span>
-                    </p>
-                    <div id="name-edit-form" style="display: none; margin-top: 1rem;">
-                        <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                        <button onclick="profileManager.saveDisplayName()">Save</button>
-                        <button onclick="profileManager.cancelEditName()">Cancel</button>
-                    </div>
-                </div>
-            `;
+            // Update text content without rebuilding HTML structure
+            this.updateUserInfoDisplay(displayName, hotness);
+
         } catch (error) {
             console.error('Error loading user info:', error);
         }
@@ -268,6 +251,33 @@ class ProfileManager {
         } catch (error) {
             console.error('Error updating profile picture URL:', error);
             throw error;
+        }
+    }
+
+    updateUserInfoDisplay(displayName, hotness) {
+        // Update display name - only update text content, don't rebuild elements
+        const nameText = document.getElementById('display-name-text');
+        if (nameText) {
+            nameText.textContent = displayName;
+        }
+
+        // Update hotness count - only update text content, don't rebuild elements
+        const hotnessCount = document.getElementById('hotness-count');
+        if (hotnessCount) {
+            hotnessCount.textContent = hotness;
+        }
+
+        // Update edit button - only update if it doesn't exist
+        let editBtn = document.getElementById('edit-name-btn');
+        if (!editBtn && nameText) {
+            editBtn = document.createElement('button');
+            editBtn.id = 'edit-name-btn';
+            editBtn.textContent = 'Edit';
+            editBtn.style.marginLeft = '8px';
+            editBtn.style.padding = '4px 8px';
+            editBtn.style.fontSize = '0.8rem';
+            editBtn.onclick = () => this.editDisplayName();
+            nameText.parentNode.appendChild(editBtn);
         }
     }
 
