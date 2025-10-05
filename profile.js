@@ -37,14 +37,8 @@ class ProfileManager {
     }
 
     setupNavigation() {
-        document.getElementById('home-btn').onclick = () => {
-            window.location.href = 'index.html';
-        };
-
-        document.getElementById('logout-btn').onclick = async () => {
-            await authManager.signOut();
-            window.location.href = 'index.html';
-        };
+        // Navigation is now handled by the dropdown menu
+        // No need for individual button event listeners
     }
 
     showProfileContent() {
