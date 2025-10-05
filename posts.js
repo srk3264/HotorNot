@@ -34,7 +34,6 @@ class PostManager {
         const postForm = document.getElementById('post-form');
         const postTitle = document.getElementById('post-title');
         const postContent = document.getElementById('post-content');
-        const anonymousCheckbox = document.getElementById('anonymous-post');
 
         // Character counters
         const titleCounter = document.querySelector('#post-title + .char-counter');
@@ -54,7 +53,6 @@ class PostManager {
 
             const title = postTitle.value.trim();
             const content = postContent.value.trim();
-            const isAnonymous = anonymousCheckbox.checked;
 
             if (!title || !content) {
                 this.showMessage('Please enter both title and content!', 'error');
@@ -62,14 +60,13 @@ class PostManager {
             }
 
             const fullContent = `${title}\n\n${content}`;
-            const result = await this.createPost(fullContent, isAnonymous);
+            const result = await this.createPost(fullContent, false); // Always non-anonymous
 
             if (result.success) {
                 postTitle.value = '';
                 postContent.value = '';
                 titleCounter.textContent = '0/200';
                 contentCounter.textContent = '0/1000';
-                anonymousCheckbox.checked = false;
                 this.showMessage('Hot take posted successfully!', 'success');
                 this.loadPosts(); // Reload posts to show the new one
             } else {

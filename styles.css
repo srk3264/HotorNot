@@ -367,44 +367,7 @@ main {
     font-weight: 500;
 }
 
-/* Anonymous Toggle Switch */
-.anonymous-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #666;
-}
 
-.toggle-switch {
-    position: relative;
-    width: 44px;
-    height: 24px;
-    background: #ccc;
-    border-radius: 12px;
-    transition: background-color 0.3s ease;
-}
-
-.toggle-switch::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
-}
-
-.anonymous-toggle input:checked + .toggle-switch {
-    background: #3498db;
-}
-
-.anonymous-toggle input:checked + .toggle-switch::before {
-    transform: translateX(20px);
-}
 
 /* Post Menu */
 .post-menu {
