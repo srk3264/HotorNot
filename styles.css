@@ -515,62 +515,23 @@ main {
     border-color: #e91e63;
 }
 
-/* Like/Dislike Icons - Thumbs Up/Down Style */
+/* Like/Dislike Icons - SVG Styling */
 .like-btn .icon,
 .dislike-btn .icon {
-    width: 18px;
-    height: 18px;
-    position: relative;
+    width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Thumbs Up Icon */
-.like-btn .icon::before {
-    content: '';
-    width: 8px;
-    height: 12px;
-    background: rgba(0, 0, 0, 0.38);
-    border-radius: 4px 4px 2px 2px;
-    position: relative;
-    transform: rotate(-15deg);
+.like-btn .icon svg,
+.dislike-btn .icon svg {
+    width: 16px;
+    height: 16px;
 }
 
-.like-btn .icon::after {
-    content: '';
-    width: 4px;
-    height: 8px;
-    background: rgba(0, 0, 0, 0.38);
-    border-radius: 2px;
-    position: absolute;
-    right: 2px;
-    top: 1px;
-    transform: rotate(45deg);
-}
 
-/* Thumbs Down Icon */
-.dislike-btn .icon::before {
-    content: '';
-    width: 8px;
-    height: 12px;
-    background: rgba(0, 0, 0, 0.38);
-    border-radius: 2px 2px 4px 4px;
-    position: relative;
-    transform: rotate(15deg);
-}
-
-.dislike-btn .icon::after {
-    content: '';
-    width: 4px;
-    height: 8px;
-    background: rgba(0, 0, 0, 0.38);
-    border-radius: 2px;
-    position: absolute;
-    right: 2px;
-    bottom: 1px;
-    transform: rotate(-45deg);
-}
 
 .like-btn.active {
     background: #2196f3;
@@ -578,12 +539,8 @@ main {
     border-color: #2196f3;
 }
 
-.like-btn.active .icon::before {
-    background: white;
-}
-
-.like-btn.active .icon::after {
-    background: white;
+.like-btn.active .icon svg {
+    stroke: white;
 }
 
 .dislike-btn.active {
@@ -592,12 +549,8 @@ main {
     border-color: #e91e63;
 }
 
-.dislike-btn.active .icon::before {
-    background: white;
-}
-
-.dislike-btn.active .icon::after {
-    background: white;
+.dislike-btn.active .icon svg {
+    stroke: white;
 }
 
 .post-actions {
