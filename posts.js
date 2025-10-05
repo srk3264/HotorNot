@@ -2,6 +2,7 @@
 class PostManager {
     constructor() {
         this.posts = [];
+        this.isAnonymous = false; // Track anonymous state
         this.init();
     }
 
@@ -60,13 +61,16 @@ class PostManager {
             }
 
             const fullContent = `${title}\n\n${content}`;
-            const result = await this.createPost(fullContent, false); // Always non-anonymous
+            const result = await this.createPost(fullContent, this.isAnonymous);
 
             if (result.success) {
                 postTitle.value = '';
                 postContent.value = '';
                 titleCounter.textContent = '0/200';
                 contentCounter.textContent = '0/1000';
+                // Reset toggle to off after successful post
+                this.isAnonymous = false;
+                this.updateToggleUI();
                 this.showMessage('Hot take posted successfully!', 'success');
                 this.loadPosts(); // Reload posts to show the new one
             } else {
@@ -460,6 +464,17 @@ class PostManager {
         return div.innerHTML;
     }
 
+    updateToggleUI() {
+        const toggleElement = document.querySelector('.anonymous-toggle');
+        if (toggleElement) {
+            if (this.isAnonymous) {
+                toggleElement.classList.add('active');
+            } else {
+                toggleElement.classList.remove('active');
+            }
+        }
+    }
+
     showMessage(message, type) {
         // Create message element if it doesn't exist
         let messageEl = document.getElementById('post-message');
@@ -477,6 +492,12 @@ class PostManager {
             messageEl.style.display = 'none';
         }, 3000);
     }
+}
+
+// Global function for toggle
+function toggleAnonymous() {
+    postManager.isAnonymous = !postManager.isAnonymous;
+    postManager.updateToggleUI();
 }
 
 // Initialize post manager
