@@ -266,22 +266,26 @@ class PostManager {
 
         return `
             <div class="post-card" data-id="${post.id}">
-                <div class="post-avatar">
-                    <div class="avatar-circle">${post.is_anonymous ? '👤' : '👤'}</div>
-                </div>
-                <div class="post-main">
+                <div class="post-header">
+                    <div class="post-avatar">
+                        <div class="avatar-circle">${post.is_anonymous ? '👤' : '👤'}</div>
+                    </div>
                     <div class="post-user-info">
                         <span class="post-username">${authorText}</span>
                     </div>
+                </div>
+                <div class="post-main">
                     <h3 class="post-title">${this.escapeHtml(title)}</h3>
                     ${description ? `<p class="post-description">${this.escapeHtml(description)}</p>` : ''}
                     <div class="post-interactions">
                         <div class="like-section">
                             <button class="like-btn ${userLike === 'like' ? 'active' : ''}" onclick="postManager.likePost('${post.id}', 'like')">
-                                ← ${likes}
+                                <div class="icon"></div>
+                                <span>${likes}</span>
                             </button>
                             <button class="dislike-btn ${userLike === 'dislike' ? 'active' : ''}" onclick="postManager.likePost('${post.id}', 'dislike')">
-                                → ${dislikes}
+                                <div class="icon"></div>
+                                <span>${dislikes}</span>
                             </button>
                         </div>
                     </div>
