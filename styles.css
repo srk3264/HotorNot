@@ -528,22 +528,48 @@ main {
 
 .like-btn .icon::before {
     content: '';
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 8px solid rgba(0, 0, 0, 0.38);
-    transform: rotate(90deg);
+    width: 14px;
+    height: 12px;
+    border: 2px solid rgba(0, 0, 0, 0.38);
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+    border-radius: 2px 0 0 0;
+    position: relative;
+}
+
+.like-btn .icon::after {
+    content: '';
+    width: 6px;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.38);
+    position: absolute;
+    right: 0;
+    top: 2px;
+    transform: rotate(45deg);
 }
 
 .dislike-btn .icon::before {
     content: '';
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 8px solid rgba(0, 0, 0, 0.38);
-    transform: rotate(90deg);
+    width: 14px;
+    height: 12px;
+    border: 2px solid rgba(0, 0, 0, 0.38);
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+    border-radius: 2px 0 0 0;
+    position: relative;
+}
+
+.dislike-btn .icon::after {
+    content: '';
+    width: 6px;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.38);
+    position: absolute;
+    right: 0;
+    top: 2px;
+    transform: rotate(135deg);
 }
 
 .like-btn.active {
@@ -553,7 +579,13 @@ main {
 }
 
 .like-btn.active .icon::before {
-    border-bottom-color: white;
+    border-color: white;
+    border-top: none;
+    border-right: none;
+}
+
+.like-btn.active .icon::after {
+    background: white;
 }
 
 .dislike-btn.active {
@@ -563,7 +595,13 @@ main {
 }
 
 .dislike-btn.active .icon::before {
-    border-top-color: white;
+    border-color: white;
+    border-top: none;
+    border-right: none;
+}
+
+.dislike-btn.active .icon::after {
+    background: white;
 }
 
 .post-actions {
