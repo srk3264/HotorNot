@@ -371,5 +371,28 @@ class ProfileManager {
     }
 }
 
+// Navbar menu functions
+function toggleNavMenu() {
+    const dropdown = document.getElementById('nav-menu-dropdown');
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function goToHome() {
+    window.location.href = 'index.html';
+    toggleNavMenu(); // Close dropdown after navigation
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('nav-menu-dropdown');
+    const toggle = document.querySelector('.nav-menu-toggle');
+
+    if (dropdown && toggle && !dropdown.contains(event.target) && !toggle.contains(event.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+
 // Initialize profile manager
 const profileManager = new ProfileManager();
