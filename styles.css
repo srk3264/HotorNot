@@ -325,6 +325,9 @@ main {
     max-width: 800px;
     margin: 0 auto;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #posts-feed h2 {
@@ -332,6 +335,15 @@ main {
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
     font-weight: 700;
+    text-align: center;
+    width: 100%;
+}
+
+#posts-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Post Cards */
