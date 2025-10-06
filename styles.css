@@ -566,7 +566,7 @@ main {
 }
 
 .like-section {
-    display: flex;
+    display: inline;
     gap: 1rem;
     align-items: center;
     width: 100%;
@@ -650,7 +650,8 @@ main {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 12px;
+    padding: 16px 0px;
+    padding-right: 16px;
     /* background: #f8f9fa; */
     /* border: 1px solid #e9ecef; */
     border-radius: 6px;
