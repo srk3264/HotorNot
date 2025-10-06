@@ -827,15 +827,14 @@ main {
     position: relative;
     margin: 0;
     width: 100%;
+    gap: 8px; /* Space between text and edit button */
 }
 
 .edit-name-btn {
-    position: absolute;
-    right: -40px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
-    transform: translateY(5px);
+    transform: translateX(-10px); /* Slide in from left */
     background: #3498db;
     color: white;
     border: none;
@@ -843,27 +842,29 @@ main {
     border-radius: 4px;
     font-size: 0.8rem;
     cursor: pointer;
-    margin-left: 8px;
+    margin-left: 4px;
     white-space: nowrap;
+    flex-shrink: 0; /* Prevent button from shrinking */
 }
 
 .user-info-container:hover .edit-name-btn {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateX(0); /* Slide to final position */
 }
 
 .edit-name-btn:hover {
     background: #2980b9;
 }
 
-/* Ensure perfect center alignment when edit button is hidden */
+/* Perfect center alignment when edit button is hidden */
 .user-info-container p:first-child {
     justify-content: center;
 }
 
+/* On hover, keep centered but show edit button inline */
 .user-info-container:hover p:first-child {
-    justify-content: flex-start;
+    justify-content: center; /* Keep centered */
 }
 
 #user-posts {
