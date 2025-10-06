@@ -639,6 +639,32 @@ main {
     stroke: none;
 }
 
+/* Profile Post Like/Dislike Info (Read-only) */
+.like-info, .dislike-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    color: #495057;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.like-info svg {
+    color: #28a745;
+}
+
+.dislike-info svg {
+    color: #dc3545;
+}
+
+.like-info span, .dislike-info span {
+    font-weight: 600;
+}
+
 .post-actions {
     display: flex;
     gap: 0.5rem;
