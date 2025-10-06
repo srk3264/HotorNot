@@ -245,7 +245,7 @@ main {
 #auth-forms {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 24px;
 }
 
 #auth-forms h3 {
@@ -279,7 +279,7 @@ main {
 }
 
 #auth-forms button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #EC6B15 0%, #ff8c42 100%);
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -311,7 +311,8 @@ main {
 
 #auth-forms button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 25px rgba(236, 107, 21, 0.4);
+    background: linear-gradient(135deg, #ff8c42 0%, #EC6B15 100%);
 }
 
 #auth-forms button:active {
