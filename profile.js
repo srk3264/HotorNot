@@ -87,15 +87,33 @@ class ProfileManager {
                 return;
             }
 
-            const email = authManager.currentUser.email;
-            const emailPrefix = email.split('@')[0];
+            // Determine which user's info to load
+            const targetUserId = this.targetUserId || authManager.currentUser.id;
+            const isViewingOwnProfile = !this.targetUserId || this.targetUserId === authManager.currentUser.id;
+
+            console.log('Loading info for user:', targetUserId, 'Own profile:', isViewingOwnProfile);
+
+            // Get user info - for other users, we need to fetch their email and profile
+            let userEmail, emailPrefix;
+
+            if (isViewingOwnProfile) {
+                // Own profile - use current user info
+                userEmail = authManager.currentUser.email;
+                emailPrefix = userEmail.split('@')[0];
+            } else {
+                // Other user's profile - we need to fetch their info
+                // For now, we'll use a generic approach since we don't have direct access to other users' emails
+                emailPrefix = 'User'; // Generic fallback
+                userEmail = 'user@example.com'; // This won't be used for display
+            }
+
             console.log('Email prefix:', emailPrefix);
 
-            // Load user profile or create default if doesn't exist
+            // Load user profile
             const { data: profile, error } = await window.supabase
                 .from('user_profiles')
                 .select('display_name, profile_picture_url')
-                .eq('user_id', authManager.currentUser.id)
+                .eq('user_id', targetUserId)
                 .single();
 
             let displayName = emailPrefix; // Default to email prefix
@@ -103,14 +121,18 @@ class ProfileManager {
 
             if (error) {
                 if (error.code === 'PGRST116' || error.message.includes('No rows found')) {
-                    // Profile doesn't exist, create it with email prefix as default
-                    console.log('Creating default profile for user:', authManager.currentUser.id);
-                    const createResult = await this.createDefaultProfile(emailPrefix);
-                    if (createResult.success) {
-                        console.log('Default profile created successfully');
-                    } else {
-                        console.error('Failed to create default profile:', createResult.error);
+                    // Profile doesn't exist - for other users, this is normal
+                    if (isViewingOwnProfile) {
+                        // Create default profile for own profile
+                        console.log('Creating default profile for user:', authManager.currentUser.id);
+                        const createResult = await this.createDefaultProfile(emailPrefix);
+                        if (createResult.success) {
+                            console.log('Default profile created successfully');
+                        } else {
+                            console.error('Failed to create default profile:', createResult.error);
+                        }
                     }
+                    // For other users, just use the default
                 } else {
                     console.error('Error loading profile:', error);
                 }
@@ -133,7 +155,7 @@ class ProfileManager {
             this.handleProfilePictureSeparately(profilePictureUrl, emailPrefix);
 
             console.log('Calling handleTextContentSeparately...');
-            this.handleTextContentSeparately(displayName, hotness);
+            this.handleTextContentSeparately(displayName, hotness, isViewingOwnProfile);
 
             console.log('loadUserInfo completed successfully');
         } catch (error) {
@@ -355,7 +377,7 @@ class ProfileManager {
         }
     }
 
-    handleTextContentSeparately(displayName, hotness) {
+    handleTextContentSeparately(displayName, hotness, isViewingOwnProfile = true) {
         // Handle ONLY the text content, don't touch profile picture
         const userDetails = document.getElementById('user-details');
         if (!userDetails) {
@@ -368,7 +390,7 @@ class ProfileManager {
         let hotnessCount = document.getElementById('hotness-count');
 
         if (!nameText || !hotnessCount) {
-            console.log('Creating text elements for:', displayName, 'hotness:', hotness);
+            console.log('Creating text elements for:', displayName, 'hotness:', hotness, 'own profile:', isViewingOwnProfile);
 
             // Create text structure if it doesn't exist
             const textContainer = document.createElement('div');
@@ -377,12 +399,14 @@ class ProfileManager {
                 <div class="user-info-container">
                     <p style="margin: 0; font-size: 1.2rem; font-weight: 600; color: #333; margin-bottom: 0.5rem;">
                         <span id="display-name-text">${displayName}</span>
-                        <button id="edit-name-btn" class="edit-name-icon-btn" onclick="profileManager.editDisplayName()" title="Edit Display Name">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil">
-                                <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
-                                <path d="m15 5 4 4"/>
-                            </svg>
-                        </button>
+                        ${isViewingOwnProfile ? `
+                            <button id="edit-name-btn" class="edit-name-icon-btn" onclick="profileManager.editDisplayName()" title="Edit Display Name">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil">
+                                    <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
+                                    <path d="m15 5 4 4"/>
+                                </svg>
+                            </button>
+                        ` : ''}
                     </p>
                     <p style="margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; color: #ff6b35;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame">
@@ -391,11 +415,13 @@ class ProfileManager {
                         <span style="font-weight: 500; font-size: 1rem; margin-right: 4px;">Hotness Score</span>
                         <span id="hotness-count" style="font-weight: 600; font-size: 1.1rem;">${hotness}</span>
                     </p>
-                    <div id="name-edit-form" style="display: none; margin-top: 1rem;">
-                        <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                        <button onclick="profileManager.saveDisplayName()">Save</button>
-                        <button onclick="profileManager.cancelEditName()">Cancel</button>
-                    </div>
+                    ${isViewingOwnProfile ? `
+                        <div id="name-edit-form" style="display: none; margin-top: 1rem;">
+                            <input type="text" id="display-name-input" placeholder="Enter display name" value="${displayName}" style="padding: 8px; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button onclick="profileManager.saveDisplayName()">Save</button>
+                            <button onclick="profileManager.cancelEditName()">Cancel</button>
+                        </div>
+                    ` : ''}
                 </div>
             `;
 
