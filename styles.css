@@ -109,7 +109,7 @@ button {
     color: white;
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 100%;
     cursor: pointer;
     font-size: 0.9rem;
     transition: background-color 0.3s;
@@ -685,7 +685,7 @@ main {
 }
 
 .edit-btn, .delete-btn {
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem 0.5rem;
     font-size: 0.8rem;
 }
 
