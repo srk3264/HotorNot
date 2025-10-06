@@ -814,9 +814,24 @@ main {
 /* User Info Hover Effects */
 .user-info-container {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-info-container p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 0;
+    width: 100%;
 }
 
 .edit-name-btn {
+    position: absolute;
+    right: -40px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -829,6 +844,7 @@ main {
     font-size: 0.8rem;
     cursor: pointer;
     margin-left: 8px;
+    white-space: nowrap;
 }
 
 .user-info-container:hover .edit-name-btn {
@@ -839,6 +855,15 @@ main {
 
 .edit-name-btn:hover {
     background: #2980b9;
+}
+
+/* Ensure perfect center alignment when edit button is hidden */
+.user-info-container p:first-child {
+    justify-content: center;
+}
+
+.user-info-container:hover p:first-child {
+    justify-content: flex-start;
 }
 
 #user-posts {
