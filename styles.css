@@ -731,7 +731,7 @@ main {
 /* Profile Picture Styles */
 .profile-section {
     position: relative;
-    margin-bottom: 24px;
+    margin-bottom: 0px;
 }
 
 .profile-picture-container {
