@@ -382,6 +382,9 @@ class ProfileManager {
             return;
         }
 
+        // Hide/show profile picture upload functionality based on ownership
+        this.updateProfilePictureUploadUI(isViewingOwnProfile);
+
         // Check if text elements exist
         let nameText = document.getElementById('display-name-text');
         let hotnessCount = document.getElementById('hotness-count');
@@ -443,6 +446,21 @@ class ProfileManager {
             console.log('Updating existing text content');
             nameText.textContent = displayName;
             hotnessCount.textContent = hotness;
+        }
+    }
+
+    updateProfilePictureUploadUI(isViewingOwnProfile) {
+        const profileButtons = document.getElementById('profile-buttons');
+        const profilePictureCircle = document.getElementById('profile-picture-circle');
+
+        if (isViewingOwnProfile) {
+            // Show upload functionality for own profile
+            if (profileButtons) profileButtons.style.display = 'block';
+            if (profilePictureCircle) profilePictureCircle.style.cursor = 'pointer';
+        } else {
+            // Hide upload functionality for other users' profiles
+            if (profileButtons) profileButtons.style.display = 'none';
+            if (profilePictureCircle) profilePictureCircle.style.cursor = 'default';
         }
     }
 

@@ -40,7 +40,7 @@
                 <div id="user-details">
                     <div class="profile-section">
                         <div class="profile-picture-container">
-                            <div class="profile-picture-circle" onclick="document.getElementById('profile-picture-input').click()">
+                            <div class="profile-picture-circle" id="profile-picture-circle" onclick="document.getElementById('profile-picture-input').click()">
                                 <img id="profile-picture-img" src="" alt="Profile Picture" style="display: none;">
                                 <div class="profile-picture-placeholder" id="profile-picture-placeholder" style="display: block;">
                                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                             <input type="file" id="profile-picture-input" accept="image/*" style="display: none;">
-                            <div class="profile-buttons">
+                            <div class="profile-buttons" id="profile-buttons">
                                 <button id="upload-picture-btn" class="upload-picture-btn" onclick="document.getElementById('profile-picture-input').click()">Upload Picture</button>
                             </div>
                         </div>
