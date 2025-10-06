@@ -645,8 +645,8 @@ main {
     align-items: center;
     gap: 6px;
     padding: 8px 12px;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
+    /* background: #f8f9fa; */
+    /* border: 1px solid #e9ecef; */
     border-radius: 6px;
     color: #495057;
     font-size: 0.9rem;
@@ -654,11 +654,11 @@ main {
 }
 
 .like-info svg {
-    color: #28a745;
+    color: #00000042;
 }
 
 .dislike-info svg {
-    color: #dc3545;
+    color: #00000042;
 }
 
 .like-info span, .dislike-info span {
