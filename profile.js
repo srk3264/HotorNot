@@ -450,23 +450,53 @@ class ProfileManager {
     }
 
     updateProfilePictureUploadUI(isViewingOwnProfile) {
-        const profileButtons = document.getElementById('profile-buttons');
-        const profilePictureCircle = document.getElementById('profile-picture-circle');
+        const profilePictureContainer = document.querySelector('.profile-picture-container');
 
         if (isViewingOwnProfile) {
-            // Show upload functionality for own profile
-            if (profileButtons) profileButtons.style.display = 'block';
-            if (profilePictureCircle) {
-                profilePictureCircle.style.cursor = 'pointer';
-                // Re-enable onclick for own profile
-                profilePictureCircle.onclick = () => document.getElementById('profile-picture-input').click();
+            // Add upload functionality for own profile
+            if (profilePictureContainer && !document.getElementById('profile-picture-input')) {
+                // Create file input
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.id = 'profile-picture-input';
+                fileInput.accept = 'image/*';
+                fileInput.style.display = 'none';
+                profilePictureContainer.appendChild(fileInput);
+
+                // Create upload button container and button
+                const buttonsContainer = document.createElement('div');
+                buttonsContainer.className = 'profile-buttons';
+                buttonsContainer.id = 'profile-buttons';
+
+                const uploadBtn = document.createElement('button');
+                uploadBtn.id = 'upload-picture-btn';
+                uploadBtn.className = 'upload-picture-btn';
+                uploadBtn.textContent = 'Upload Picture';
+                uploadBtn.onclick = () => document.getElementById('profile-picture-input').click();
+
+                buttonsContainer.appendChild(uploadBtn);
+                profilePictureContainer.appendChild(buttonsContainer);
+
+                // Make profile picture clickable
+                const profilePictureCircle = document.getElementById('profile-picture-circle');
+                if (profilePictureCircle) {
+                    profilePictureCircle.style.cursor = 'pointer';
+                    profilePictureCircle.onclick = () => document.getElementById('profile-picture-input').click();
+                }
+
+                // Set up the file input event listener
+                this.setupProfilePictureUpload();
             }
         } else {
-            // Hide upload functionality for other users' profiles
-            if (profileButtons) profileButtons.style.display = 'none';
+            // Remove upload functionality for other users' profiles
+            const fileInput = document.getElementById('profile-picture-input');
+            const profileButtons = document.getElementById('profile-buttons');
+            const profilePictureCircle = document.getElementById('profile-picture-circle');
+
+            if (fileInput) fileInput.remove();
+            if (profileButtons) profileButtons.remove();
             if (profilePictureCircle) {
                 profilePictureCircle.style.cursor = 'default';
-                // Remove onclick handler for other users' profiles
                 profilePictureCircle.onclick = null;
             }
         }
