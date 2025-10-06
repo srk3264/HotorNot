@@ -933,6 +933,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    align-items: center;
 }
 
 #user-posts-container .post {
