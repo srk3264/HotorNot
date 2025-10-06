@@ -30,10 +30,12 @@ class ProfileManager {
         // Listen for auth changes
         window.supabase.auth.onAuthStateChange((event, session) => {
             if (session?.user) {
+                this.showLoggedInNavbar();
                 this.showProfileContent();
                 this.loadUserInfo();
                 this.loadUserPosts();
             } else {
+                this.showLoggedOutNavbar();
                 this.showAuthSection();
             }
         });
@@ -76,6 +78,16 @@ class ProfileManager {
     showAuthSection() {
         document.getElementById('profile-content').style.display = 'none';
         document.getElementById('auth-section').style.display = 'block';
+    }
+
+    showLoggedInNavbar() {
+        document.getElementById('auth-btn').style.display = 'none';
+        document.getElementById('nav-menu').style.display = 'flex';
+    }
+
+    showLoggedOutNavbar() {
+        document.getElementById('nav-menu').style.display = 'none';
+        document.getElementById('auth-btn').style.display = 'block';
     }
 
     async loadUserInfo() {
