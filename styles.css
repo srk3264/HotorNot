@@ -811,7 +811,7 @@ main {
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* User Info Hover Effects */
+/* User Info Edit Icon */
 .user-info-container {
     position: relative;
     display: flex;
@@ -827,44 +827,39 @@ main {
     position: relative;
     margin: 0;
     width: 100%;
-    gap: 8px; /* Space between text and edit button */
+    gap: 8px; /* Space between text and edit icon */
 }
 
-.edit-name-btn {
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    transform: translateX(-10px); /* Slide in from left */
-    background: #3498db;
-    color: white;
+.edit-name-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
     border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+    padding: 2px;
     cursor: pointer;
-    margin-left: 4px;
-    white-space: nowrap;
-    flex-shrink: 0; /* Prevent button from shrinking */
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    color: #666;
+    opacity: 0.7;
 }
 
-.user-info-container:hover .edit-name-btn {
+.edit-name-icon-btn:hover {
+    background: #f0f0f0;
     opacity: 1;
-    visibility: visible;
-    transform: translateX(0); /* Slide to final position */
+    color: #3498db;
+    transform: scale(1.1);
 }
 
-.edit-name-btn:hover {
-    background: #2980b9;
+.edit-name-icon-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
 }
 
-/* Perfect center alignment when edit button is hidden */
+/* Perfect center alignment with always-visible edit icon */
 .user-info-container p:first-child {
     justify-content: center;
-}
-
-/* On hover, keep centered but show edit button inline */
-.user-info-container:hover p:first-child {
-    justify-content: center; /* Keep centered */
 }
 
 #user-posts {
