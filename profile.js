@@ -454,23 +454,25 @@ class ProfileManager {
             // Determine which user's posts to load
             const userId = this.targetUserId || authManager.currentUser.id;
 
-            // Build query - filter out anonymous posts if viewing another user's profile
-            let query = window.supabase
+            // Always load ALL posts for accurate hotness calculation
+            const { data: allPosts, error: postsError } = await window.supabase
                 .from('posts')
                 .select('*')
                 .eq('author_id', userId)
                 .order('created_at', { ascending: false });
 
-            // If viewing another user's profile, only show non-anonymous posts
+            if (postsError) throw postsError;
+
+            // Store all posts for hotness calculation
+            this.allUserPosts = allPosts || [];
+
+            // Filter posts for display - hide anonymous posts from third-party viewers
+            let postsToDisplay = allPosts || [];
             if (this.targetUserId && this.targetUserId !== authManager.currentUser.id) {
-                query = query.eq('is_anonymous', false);
+                postsToDisplay = allPosts.filter(post => !post.is_anonymous) || [];
             }
 
-            const { data, error } = await query;
-
-            if (error) throw error;
-
-            this.userPosts = data || [];
+            this.userPosts = postsToDisplay;
             await this.loadLikesForUserPosts();
             this.displayUserPosts();
             this.updatePostCount();
@@ -740,11 +742,14 @@ class ProfileManager {
 
     async calculateHotness() {
         try {
+            // Use all posts (including anonymous) for accurate hotness calculation
+            const postsToCalculate = this.allUserPosts || this.userPosts;
+
             // Get all likes for posts by this user
             const { data: likesData, error } = await window.supabase
                 .from('likes')
                 .select('like_type')
-                .in('post_id', this.userPosts.map(post => post.id));
+                .in('post_id', postsToCalculate.map(post => post.id));
 
             if (error) throw error;
 
