@@ -723,6 +723,8 @@ class ProfileManager {
         }
 
         try {
+            console.log('Attempting to like post:', postId, 'with type:', likeType);
+
             // Check if user already liked/disliked this post
             const { data: existingLike, error: fetchError } = await window.supabase
                 .from('likes')
@@ -732,29 +734,39 @@ class ProfileManager {
                 .single();
 
             if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows returned
+                console.error('Error fetching existing like:', fetchError);
                 throw fetchError;
             }
 
             if (existingLike) {
                 if (existingLike.like_type === likeType) {
                     // User clicked the same button - remove the like/dislike
+                    console.log('Removing existing like/dislike');
                     const { error: deleteError } = await window.supabase
                         .from('likes')
                         .delete()
                         .eq('id', existingLike.id);
 
-                    if (deleteError) throw deleteError;
+                    if (deleteError) {
+                        console.error('Error deleting like:', deleteError);
+                        throw deleteError;
+                    }
                 } else {
                     // User changed their vote
+                    console.log('Changing vote from', existingLike.like_type, 'to', likeType);
                     const { error: updateError } = await window.supabase
                         .from('likes')
                         .update({ like_type: likeType })
                         .eq('id', existingLike.id);
 
-                    if (updateError) throw updateError;
+                    if (updateError) {
+                        console.error('Error updating like:', updateError);
+                        throw updateError;
+                    }
                 }
             } else {
                 // New like/dislike
+                console.log('Creating new like/dislike');
                 const { error: insertError } = await window.supabase
                     .from('likes')
                     .insert([
@@ -765,11 +777,16 @@ class ProfileManager {
                         }
                     ]);
 
-                if (insertError) throw insertError;
+                if (insertError) {
+                    console.error('Error inserting like:', insertError);
+                    throw insertError;
+                }
             }
 
+            console.log('Like operation successful, reloading posts...');
             // Reload posts to update the UI
             await this.loadUserPosts();
+            console.log('Posts reloaded successfully');
         } catch (error) {
             console.error('Error handling like:', error);
             this.showMessage('Error updating like', 'error');
