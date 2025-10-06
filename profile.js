@@ -93,31 +93,28 @@ class ProfileManager {
 
             console.log('Loading info for user:', targetUserId, 'Own profile:', isViewingOwnProfile);
 
-            // Get user info - for other users, we need to fetch their email and profile
-            let userEmail, emailPrefix;
-
-            if (isViewingOwnProfile) {
-                // Own profile - use current user info
-                userEmail = authManager.currentUser.email;
-                emailPrefix = userEmail.split('@')[0];
-            } else {
-                // Other user's profile - we need to fetch their info
-                // For now, we'll use a generic approach since we don't have direct access to other users' emails
-                emailPrefix = 'User'; // Generic fallback
-                userEmail = 'user@example.com'; // This won't be used for display
-            }
-
-            console.log('Email prefix:', emailPrefix);
-
-            // Load user profile
+            // Load user profile first
             const { data: profile, error } = await window.supabase
                 .from('user_profiles')
                 .select('display_name, profile_picture_url')
                 .eq('user_id', targetUserId)
                 .single();
 
-            let displayName = emailPrefix; // Default to email prefix
-            let profilePictureUrl = null;
+            let displayName, userInitial, profilePictureUrl = null;
+
+            if (isViewingOwnProfile) {
+                // Own profile - use current user info
+                const userEmail = authManager.currentUser.email;
+                userInitial = userEmail.split('@')[0];
+                displayName = profile?.display_name || userInitial;
+            } else {
+                // Other user's profile - use their display name or generic fallback
+                displayName = profile?.display_name || 'User';
+                userInitial = displayName.charAt(0).toUpperCase();
+            }
+
+            console.log('Display name:', displayName);
+            console.log('User initial:', userInitial);
 
             if (error) {
                 if (error.code === 'PGRST116' || error.message.includes('No rows found')) {
@@ -125,7 +122,7 @@ class ProfileManager {
                     if (isViewingOwnProfile) {
                         // Create default profile for own profile
                         console.log('Creating default profile for user:', authManager.currentUser.id);
-                        const createResult = await this.createDefaultProfile(emailPrefix);
+                        const createResult = await this.createDefaultProfile(userInitial);
                         if (createResult.success) {
                             console.log('Default profile created successfully');
                         } else {
@@ -152,7 +149,7 @@ class ProfileManager {
 
             // Handle profile picture and text separately to avoid interference
             console.log('Calling handleProfilePictureSeparately...');
-            this.handleProfilePictureSeparately(profilePictureUrl, emailPrefix);
+            this.handleProfilePictureSeparately(profilePictureUrl, userInitial);
 
             console.log('Calling handleTextContentSeparately...');
             this.handleTextContentSeparately(displayName, hotness, isViewingOwnProfile);
