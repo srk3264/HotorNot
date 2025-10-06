@@ -120,11 +120,13 @@ button:hover {
 }
 
 button#auth-btn {
-    background: #000;
+    background: #000 !important;
+    padding: 16px 24px !important;
+    border-radius: 12px !important;
 }
 
 button#auth-btn:hover {
-    background: #c0392b;
+    background: #333 !important;
 }
 
 main {
