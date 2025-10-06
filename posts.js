@@ -284,7 +284,7 @@ class PostManager {
                         }
                     </div>
                     <div class="post-user-info">
-                        <span class="post-username">${authorText}</span>
+                        <span class="post-username ${!post.is_anonymous ? 'clickable-username' : ''}" ${!post.is_anonymous ? `onclick="viewUserProfile('${post.author_id}')" style="cursor: pointer;"` : ''}>${authorText}</span>
                     </div>
                 </div>
                 <div class="post-main">
@@ -534,6 +534,12 @@ document.addEventListener('click', function(event) {
         dropdown.style.display = 'none';
     }
 });
+
+// Global function to view user profile
+function viewUserProfile(userId) {
+    // Navigate to profile page with user ID parameter
+    window.location.href = `profile.html?userId=${userId}`;
+}
 
 // Initialize post manager
 const postManager = new PostManager();

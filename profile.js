@@ -13,6 +13,9 @@ class ProfileManager {
             return;
         }
 
+        // Check if we're viewing a specific user's profile
+        this.targetUserId = this.getUrlParameter('userId');
+
         // Set up navigation
         this.setupNavigation();
 
@@ -42,6 +45,11 @@ class ProfileManager {
     setupNavigation() {
         // Navigation is now handled by the dropdown menu
         // No need for individual button event listeners
+    }
+
+    getUrlParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
     }
 
     setupProfilePictureUpload() {
@@ -417,11 +425,22 @@ class ProfileManager {
 
     async loadUserPosts() {
         try {
-            const { data, error } = await window.supabase
+            // Determine which user's posts to load
+            const userId = this.targetUserId || authManager.currentUser.id;
+
+            // Build query - filter out anonymous posts if viewing another user's profile
+            let query = window.supabase
                 .from('posts')
                 .select('*')
-                .eq('author_id', authManager.currentUser.id)
+                .eq('author_id', userId)
                 .order('created_at', { ascending: false });
+
+            // If viewing another user's profile, only show non-anonymous posts
+            if (this.targetUserId && this.targetUserId !== authManager.currentUser.id) {
+                query = query.eq('is_anonymous', false);
+            }
+
+            const { data, error } = await query;
 
             if (error) throw error;
 
@@ -431,7 +450,7 @@ class ProfileManager {
             this.updatePostCount();
         } catch (error) {
             console.error('Error loading user posts:', error);
-            this.showMessage('Error loading your posts', 'error');
+            this.showMessage('Error loading posts', 'error');
         }
     }
 
@@ -439,7 +458,13 @@ class ProfileManager {
         const container = document.getElementById('user-posts-container');
 
         if (this.userPosts.length === 0) {
-            container.innerHTML = '<p>You haven\'t posted any hot takes yet. <a href="index.html">Go share your first one!</a></p>';
+            if (this.targetUserId && this.targetUserId !== authManager.currentUser.id) {
+                // Viewing another user's profile with no posts
+                container.innerHTML = '<p>This user hasn\'t posted any hot takes yet.</p>';
+            } else {
+                // Own profile with no posts
+                container.innerHTML = '<p>You haven\'t posted any hot takes yet. <a href="index.html">Go share your first one!</a></p>';
+            }
             return;
         }
 
@@ -460,6 +485,9 @@ class ProfileManager {
         const likesData = this.likesData[post.id] || { likes: 0, dislikes: 0, userLike: null };
         const { likes, dislikes, userLike } = likesData;
 
+        // Determine if this is viewing another user's profile
+        const isViewingOtherProfile = this.targetUserId && this.targetUserId !== authManager.currentUser?.id;
+
         return `
             <div class="post-card" data-id="${post.id}">
                 <div class="post-header">
@@ -471,38 +499,59 @@ class ProfileManager {
                     ${description ? `<p class="post-description">${this.escapeHtml(description)}</p>` : ''}
                     <div class="post-interactions">
                         <div class="like-section">
-                            <div class="like-info">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M7 10v12"/>
-                                    <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
-                                </svg>
-                                <span>${likes}</span>
-                            </div>
-                            <div class="dislike-info">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 14V2"/>
-                                    <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/>
-                                </svg>
-                                <span>${dislikes}</span>
-                            </div>
+                            ${isViewingOtherProfile ? `
+                                <!-- Interactive buttons for viewing other user's profile -->
+                                <button class="like-btn ${userLike === 'like' ? 'active' : ''}" onclick="profileManager.likePost('${post.id}', 'like')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                        <path d="M7 10v12"/>
+                                        <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
+                                    </svg>
+                                    <span>${likes}</span>
+                                </button>
+                                <button class="dislike-btn ${userLike === 'dislike' ? 'active' : ''}" onclick="profileManager.likePost('${post.id}', 'dislike')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                        <path d="M17 14V2"/>
+                                        <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/>
+                                    </svg>
+                                    <span>${dislikes}</span>
+                                </button>
+                            ` : `
+                                <!-- Read-only info for own profile -->
+                                <div class="like-info">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M7 10v12"/>
+                                        <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
+                                    </svg>
+                                    <span>${likes}</span>
+                                </div>
+                                <div class="dislike-info">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 14V2"/>
+                                        <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/>
+                                    </svg>
+                                    <span>${dislikes}</span>
+                                </div>
+                            `}
                         </div>
                     </div>
                 </div>
-                <div class="post-actions">
-                    <button class="edit-btn" onclick="profileManager.editPost('${post.id}')" title="Edit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
-                            <path d="m15 5 4 4"/>
-                        </svg>
-                    </button>
-                    <button class="delete-btn" onclick="profileManager.deletePost('${post.id}')" title="Delete">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
-                            <path d="M3 6h18"/>
-                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
-                    </button>
-                </div>
+                ${!isViewingOtherProfile ? `
+                    <div class="post-actions">
+                        <button class="edit-btn" onclick="profileManager.editPost('${post.id}')" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
+                                <path d="m15 5 4 4"/>
+                            </svg>
+                        </button>
+                        <button class="delete-btn" onclick="profileManager.deletePost('${post.id}')" title="Delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                <path d="M3 6h18"/>
+                                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                ` : ''}
             </div>
         `;
     }
