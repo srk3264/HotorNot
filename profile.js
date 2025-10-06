@@ -426,6 +426,7 @@ class ProfileManager {
             if (error) throw error;
 
             this.userPosts = data || [];
+            await this.loadLikesForUserPosts();
             this.displayUserPosts();
             this.updatePostCount();
         } catch (error) {
@@ -455,6 +456,10 @@ class ProfileManager {
         const title = contentLines[0]?.substring(0, 50) + (contentLines[0]?.length > 50 ? '...' : '') || 'Untitled';
         const description = contentLines.slice(1).join('\n') || '';
 
+        // Get likes data for this post
+        const likesData = this.likesData[post.id] || { likes: 0, dislikes: 0, userLike: null };
+        const { likes, dislikes, userLike } = likesData;
+
         return `
             <div class="post" data-id="${post.id}">
                 <div class="post-header">
@@ -464,6 +469,24 @@ class ProfileManager {
                 <div class="post-main">
                     <h3 class="post-title">${this.escapeHtml(title)}</h3>
                     ${description ? `<p class="post-description">${this.escapeHtml(description)}</p>` : ''}
+                    <div class="post-interactions">
+                        <div class="like-section">
+                            <button class="like-btn ${userLike === 'like' ? 'active' : ''}" onclick="profileManager.likePost('${post.id}', 'like')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                    <path d="M7 10v12"/>
+                                    <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
+                                </svg>
+                                <span>${likes}</span>
+                            </button>
+                            <button class="dislike-btn ${userLike === 'dislike' ? 'active' : ''}" onclick="profileManager.likePost('${post.id}', 'dislike')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                    <path d="M17 14V2"/>
+                                    <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/>
+                                </svg>
+                                <span>${dislikes}</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="post-actions">
                     <button class="edit-btn" onclick="profileManager.editPost('${post.id}')" title="Edit">
@@ -657,6 +680,95 @@ class ProfileManager {
         } catch (error) {
             console.error('Error calculating hotness:', error);
             return 0;
+        }
+    }
+
+    async loadLikesForUserPosts() {
+        try {
+            // Get all likes for current user's posts
+            const { data: likesData, error } = await window.supabase
+                .from('likes')
+                .select('post_id, like_type, user_id');
+
+            if (error) throw error;
+
+            // Group likes by post_id
+            this.likesData = {};
+            likesData?.forEach(like => {
+                if (!this.likesData[like.post_id]) {
+                    this.likesData[like.post_id] = { likes: 0, dislikes: 0, userLike: null };
+                }
+                if (like.like_type === 'like') {
+                    this.likesData[like.post_id].likes++;
+                } else {
+                    this.likesData[like.post_id].dislikes++;
+                }
+                if (like.user_id === authManager.currentUser?.id) {
+                    this.likesData[like.post_id].userLike = like.like_type;
+                }
+            });
+        } catch (error) {
+            console.error('Error loading likes for user posts:', error);
+        }
+    }
+
+    async likePost(postId, likeType) {
+        if (!authManager.currentUser) {
+            this.showMessage('Please log in to like posts', 'error');
+            return;
+        }
+
+        try {
+            // Check if user already liked/disliked this post
+            const { data: existingLike, error: fetchError } = await window.supabase
+                .from('likes')
+                .select('*')
+                .eq('post_id', postId)
+                .eq('user_id', authManager.currentUser.id)
+                .single();
+
+            if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows returned
+                throw fetchError;
+            }
+
+            if (existingLike) {
+                if (existingLike.like_type === likeType) {
+                    // User clicked the same button - remove the like/dislike
+                    const { error: deleteError } = await window.supabase
+                        .from('likes')
+                        .delete()
+                        .eq('id', existingLike.id);
+
+                    if (deleteError) throw deleteError;
+                } else {
+                    // User changed their vote
+                    const { error: updateError } = await window.supabase
+                        .from('likes')
+                        .update({ like_type: likeType })
+                        .eq('id', existingLike.id);
+
+                    if (updateError) throw updateError;
+                }
+            } else {
+                // New like/dislike
+                const { error: insertError } = await window.supabase
+                    .from('likes')
+                    .insert([
+                        {
+                            post_id: postId,
+                            user_id: authManager.currentUser.id,
+                            like_type: likeType
+                        }
+                    ]);
+
+                if (insertError) throw insertError;
+            }
+
+            // Reload posts to update the UI
+            await this.loadUserPosts();
+        } catch (error) {
+            console.error('Error handling like:', error);
+            this.showMessage('Error updating like', 'error');
         }
     }
 
