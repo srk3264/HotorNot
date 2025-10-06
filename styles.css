@@ -372,6 +372,10 @@ main {
     color: white;
 }
 
+.anonymous-avatar {
+    background: #000000 !important;
+}
+
 .post-header {
     display: flex;
     align-items: center;

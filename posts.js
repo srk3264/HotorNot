@@ -276,7 +276,7 @@ class PostManager {
                 <div class="post-header">
                     <div class="post-avatar">
                         ${post.is_anonymous ?
-                            `<div class="avatar-circle">👤</div>` :
+                            `<div class="avatar-circle anonymous-avatar"></div>` :
                             (post.author_profile_picture_url ?
                                 `<img src="${post.author_profile_picture_url}" alt="${authorText}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">` :
                                 `<div class="avatar-circle">${authorText.charAt(0).toUpperCase()}</div>`
