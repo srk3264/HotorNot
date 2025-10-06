@@ -14,21 +14,95 @@ class PostManager {
             return;
         }
 
+        // Set up authentication state handling
+        this.setupAuthStateHandling();
+
         if (authManager.currentUser) {
+            this.showMainContent();
             this.loadPosts();
+        } else {
+            this.hideMainContent();
         }
 
-        // Listen for auth changes to reload posts
+        // Set up post form (only when logged in)
+        if (authManager.currentUser) {
+            this.setupPostForm();
+        }
+    }
+
+    setupAuthStateHandling() {
+        // Listen for auth changes
         window.supabase.auth.onAuthStateChange((event, session) => {
             if (session?.user) {
+                this.showMainContent();
                 this.loadPosts();
+                this.setupPostForm(); // Set up form when logging in
             } else {
+                this.hideMainContent();
                 this.clearPosts();
             }
         });
+    }
 
-        // Set up post form
+    showMainContent() {
+        const mainContent = document.getElementById('main-content');
+        if (!mainContent) return;
+
+        // Clear existing content
+        mainContent.innerHTML = '';
+
+        // Create posts feed section
+        const postsFeedSection = document.createElement('section');
+        postsFeedSection.id = 'posts-feed';
+        postsFeedSection.innerHTML = `
+            <h2>Latest Hot Takes</h2>
+            <div id="posts-container">
+                <!-- Posts will be loaded here -->
+            </div>
+        `;
+
+        // Create post form section
+        const createPostSection = document.createElement('section');
+        createPostSection.id = 'create-post';
+        createPostSection.innerHTML = `
+            <form id="post-form">
+                <div class="input-group">
+                    <input type="text" id="post-title" placeholder="Enter a bold title..." maxlength="200" required>
+                    <div class="char-counter">0/200</div>
+                </div>
+
+                <div class="input-group">
+                    <textarea id="post-content" placeholder="Explain your hot take..." maxlength="1000" required></textarea>
+                    <div class="char-counter">0/1000</div>
+                </div>
+
+                <div class="form-actions">
+                    <div class="anonymous-toggle" onclick="toggleAnonymous()">
+                        <div class="toggle-track">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                        <span class="toggle-label">Anonymous</span>
+                    </div>
+                    <button type="submit" class="share-btn">
+                        Share Take →
+                    </button>
+                </div>
+            </form>
+        `;
+
+        // Append sections to main content
+        mainContent.appendChild(createPostSection);
+        mainContent.appendChild(postsFeedSection);
+
+        // Set up the post form now that it exists in DOM
         this.setupPostForm();
+    }
+
+    hideMainContent() {
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) {
+            mainContent.innerHTML = '';
+        }
     }
 
     setupPostForm() {
