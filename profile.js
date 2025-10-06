@@ -456,11 +456,19 @@ class ProfileManager {
         if (isViewingOwnProfile) {
             // Show upload functionality for own profile
             if (profileButtons) profileButtons.style.display = 'block';
-            if (profilePictureCircle) profilePictureCircle.style.cursor = 'pointer';
+            if (profilePictureCircle) {
+                profilePictureCircle.style.cursor = 'pointer';
+                // Re-enable onclick for own profile
+                profilePictureCircle.onclick = () => document.getElementById('profile-picture-input').click();
+            }
         } else {
             // Hide upload functionality for other users' profiles
             if (profileButtons) profileButtons.style.display = 'none';
-            if (profilePictureCircle) profilePictureCircle.style.cursor = 'default';
+            if (profilePictureCircle) {
+                profilePictureCircle.style.cursor = 'default';
+                // Remove onclick handler for other users' profiles
+                profilePictureCircle.onclick = null;
+            }
         }
     }
 
