@@ -77,18 +77,18 @@ class AuthManager {
 
         if (this.currentUser) {
             // User is logged in
-            authSection.style.display = 'none';
-            mainContent.style.display = 'block';
-            authBtn.style.display = 'none';
+            if (authSection) authSection.style.display = 'none';
+            if (mainContent) mainContent.style.display = 'block';
+            if (authBtn) authBtn.style.display = 'none';
             if (navMenu) navMenu.style.display = 'flex';
-            createPostSection.style.display = 'block';
+            if (createPostSection) createPostSection.style.display = 'block';
         } else {
             // User is not logged in
-            authSection.style.display = 'block';
-            mainContent.style.display = 'none';
-            authBtn.style.display = 'inline';
+            if (authSection) authSection.style.display = 'block';
+            if (mainContent) mainContent.style.display = 'none';
+            if (authBtn) authBtn.style.display = 'inline';
             if (navMenu) navMenu.style.display = 'none';
-            createPostSection.style.display = 'none';
+            if (createPostSection) createPostSection.style.display = 'none';
         }
     }
 
@@ -177,12 +177,18 @@ class AuthManager {
 
     showMessage(message) {
         const messageDiv = document.getElementById('auth-message');
-        messageDiv.textContent = message;
-        messageDiv.style.display = 'block';
+        if (messageDiv) {
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
 
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-        }, 3000);
+            setTimeout(() => {
+                if (messageDiv) {
+                    messageDiv.style.display = 'none';
+                }
+            }, 3000);
+        } else {
+            console.warn('Auth message element not found');
+        }
     }
 }
 
@@ -190,4 +196,7 @@ class AuthManager {
 const authManager = new AuthManager();
 
 // Event listeners for header buttons
-document.getElementById('auth-btn').onclick = () => authManager.showAuthModal();
+const authBtn = document.getElementById('auth-btn');
+if (authBtn) {
+    authBtn.onclick = () => authManager.showAuthModal();
+}
