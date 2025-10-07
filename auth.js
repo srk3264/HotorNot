@@ -69,7 +69,7 @@ class AuthManager {
     }
 
     updateUI() {
-        const authSection = document.getElementById('auth-section');
+        const heroSection = document.getElementById('hero-section');
         const mainContent = document.getElementById('main-content');
         const authBtn = document.getElementById('auth-btn');
         const navMenu = document.querySelector('.nav-menu');
@@ -77,14 +77,14 @@ class AuthManager {
 
         if (this.currentUser) {
             // User is logged in
-            if (authSection) authSection.style.display = 'none';
+            if (heroSection) heroSection.style.display = 'none';
             if (mainContent) mainContent.style.display = 'block';
             if (authBtn) authBtn.style.display = 'none';
             if (navMenu) navMenu.style.display = 'flex';
             if (createPostSection) createPostSection.style.display = 'block';
         } else {
             // User is not logged in
-            if (authSection) authSection.style.display = 'block';
+            if (heroSection) heroSection.style.display = 'flex';
             if (mainContent) mainContent.style.display = 'none';
             if (authBtn) authBtn.style.display = 'inline';
             if (navMenu) navMenu.style.display = 'none';
@@ -199,4 +199,10 @@ const authManager = new AuthManager();
 const authBtn = document.getElementById('auth-btn');
 if (authBtn) {
     authBtn.onclick = () => authManager.showAuthModal();
+}
+
+// Event listener for hero CTA button
+const heroLoginBtn = document.getElementById('hero-login-btn');
+if (heroLoginBtn) {
+    heroLoginBtn.onclick = () => authManager.showAuthModal();
 }
