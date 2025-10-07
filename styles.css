@@ -263,6 +263,7 @@ main {
     background: #fff;
     transition: all 0.3s ease;
     outline: none;
+    margin: 8px;
 }
 
 #auth-forms input:focus {
@@ -287,9 +288,11 @@ main {
     font-weight: 600;
     font-family: inherit;
     transition: all 0.3s ease;
-    margin-top: 0.5rem;
+    margin: 0.5rem;
     position: relative;
     overflow: hidden;
+    display: block;
+    width: 100%;
 }
 
 #auth-forms button::before {
