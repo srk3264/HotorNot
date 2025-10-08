@@ -87,7 +87,7 @@ class AuthManager {
         } else {
             // User is not logged in
             if (heroSection) heroSection.style.display = 'flex';
-            if (newsCarousel) newsCarousel.style.display = 'block';
+            if (newsCarousel) newsCarousel.style.display = 'none';
             if (mainContent) mainContent.style.display = 'none';
             if (authBtn) authBtn.style.display = 'inline';
             if (navMenu) navMenu.style.display = 'none';
