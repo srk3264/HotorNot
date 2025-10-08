@@ -77,15 +77,21 @@ class AuthManager {
         const createPostSection = document.getElementById('create-post');
 
         if (this.currentUser) {
-            // User is logged in
+            // User is logged in - show everything except hero
             if (heroSection) heroSection.style.display = 'none';
-            if (newsCarousel) newsCarousel.style.display = 'block';
+            if (newsCarousel) {
+                newsCarousel.style.display = 'block';
+                // Initialize carousel if not already done
+                if (!window.newsCarousel && typeof NewsCarousel !== 'undefined') {
+                    window.newsCarousel = new NewsCarousel();
+                }
+            }
             if (mainContent) mainContent.style.display = 'block';
             if (authBtn) authBtn.style.display = 'none';
             if (navMenu) navMenu.style.display = 'flex';
             if (createPostSection) createPostSection.style.display = 'block';
         } else {
-            // User is not logged in
+            // User is not logged in - only show hero and login
             if (heroSection) heroSection.style.display = 'flex';
             if (newsCarousel) newsCarousel.style.display = 'none';
             if (mainContent) mainContent.style.display = 'none';
