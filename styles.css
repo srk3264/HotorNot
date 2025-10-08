@@ -142,13 +142,16 @@ main {
 
 /* Hero Section - Shows before login */
 .hero-section {
-    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    position: relative;
+    z-index: 1;
     overflow: hidden;
 }
 
