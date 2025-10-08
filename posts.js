@@ -358,28 +358,32 @@ class PostManager {
                 // Move to next item for next call
                 this.newsIndex++;
 
-                // Extract image URL using multiple patterns
+                // Extract image and description from content:encoded field
                 let imageUrl = null;
+                let description = '';
 
-                // Pattern 1: Check for media field
-                if (item.media && item.media.url) {
-                    imageUrl = item.media.url;
-                }
-                // Pattern 2: Check enclosures array
-                else if (item.enclosures && item.enclosures.length > 0) {
-                    for (let enclosure of item.enclosures) {
-                        if (enclosure.url && enclosure.url.match(/\.(jpg|jpeg|png|gif)$/i)) {
-                            imageUrl = enclosure.url;
-                            break;
-                        }
-                    }
-                }
-                // Pattern 3: Check description for img tags
-                else if (item.description) {
-                    const imgMatch = item.description.match(/<img[^>]+src="([^"]+)"/);
+                // Check for content:encoded field (NPR puts images here)
+                if (item.content && item.content.length > 0) {
+                    console.log('Found content field, length:', item.content.length);
+
+                    // Extract first img src from content
+                    const imgMatch = item.content.match(/<img[^>]+src="([^"]+)"/);
                     if (imgMatch) {
                         imageUrl = imgMatch[1];
+                        console.log('Found image in content:', imageUrl);
                     }
+
+                    // Extract first paragraph from content
+                    const firstPMatch = item.content.match(/<p[^>]*>([^<]+)<\/p>/);
+                    if (firstPMatch) {
+                        description = firstPMatch[1];
+                        console.log('Found first paragraph:', description);
+                    }
+                }
+
+                // Fallback to description if content:encoded doesn't have paragraph
+                if (!description && item.description) {
+                    description = this.stripHtml(item.description).substring(0, 120) + '...';
                 }
 
                 // Fallback to placeholder if no image found
@@ -389,7 +393,7 @@ class PostManager {
 
                 return {
                     title: item.title,
-                    description: this.stripHtml(item.description).substring(0, 120) + '...',
+                    description: description || 'No description available',
                     image: imageUrl,
                     link: item.link,
                     pubDate: item.pubDate
