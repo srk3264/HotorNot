@@ -125,7 +125,7 @@ class NewsCarousel {
             {
                 title: "NPR News Feed Unavailable",
                 description: "Unable to load latest news. Please check back later.",
-                image: "https://via.placeholder.com/300x150?text=NPR+News"
+                image: `https://picsum.photos/300/150?random=1`
             }
         ];
     }
@@ -144,7 +144,7 @@ class NewsCarousel {
             newsElement.className = 'news-item';
             newsElement.innerHTML = `
                 <img src="${item.image}" alt="${item.title}" class="news-image"
-                     onerror="this.src='https://via.placeholder.com/300x150?text=NPR+News'">
+                     onerror="this.src='https://picsum.photos/300/150?text=News'">
                 <div class="news-content">
                     <h3 class="news-title">${item.title}</h3>
                     <p class="news-description">${item.description}</p>
