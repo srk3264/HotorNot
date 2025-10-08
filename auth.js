@@ -70,6 +70,7 @@ class AuthManager {
 
     updateUI() {
         const heroSection = document.getElementById('hero-section');
+        const newsCarousel = document.getElementById('news-carousel');
         const mainContent = document.getElementById('main-content');
         const authBtn = document.getElementById('auth-btn');
         const navMenu = document.querySelector('.nav-menu');
@@ -78,6 +79,7 @@ class AuthManager {
         if (this.currentUser) {
             // User is logged in
             if (heroSection) heroSection.style.display = 'none';
+            if (newsCarousel) newsCarousel.style.display = 'block';
             if (mainContent) mainContent.style.display = 'block';
             if (authBtn) authBtn.style.display = 'none';
             if (navMenu) navMenu.style.display = 'flex';
@@ -85,6 +87,7 @@ class AuthManager {
         } else {
             // User is not logged in
             if (heroSection) heroSection.style.display = 'flex';
+            if (newsCarousel) newsCarousel.style.display = 'block';
             if (mainContent) mainContent.style.display = 'none';
             if (authBtn) authBtn.style.display = 'inline';
             if (navMenu) navMenu.style.display = 'none';
