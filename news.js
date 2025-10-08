@@ -20,16 +20,24 @@ class NewsCarousel {
             const data = await response.json();
 
             if (data.status === 'ok' && data.items) {
-                // Extract first 3 items with images and descriptions
-                this.newsItems = data.items.slice(0, 3).map(item => ({
-                    title: item.title,
-                    description: this.stripHtml(item.description).substring(0, 120) + '...',
-                    image: this.extractImageUrl(item.description) || 'https://via.placeholder.com/300x150?text=NPR+News',
-                    link: item.link,
-                    pubDate: item.pubDate
-                }));
+                console.log('Raw RSS data:', data.items[0]); // Debug first item
 
-                console.log('Fetched NPR news items:', this.newsItems);
+                // Extract first 3 items with images and descriptions
+                this.newsItems = data.items.slice(0, 3).map((item, index) => {
+                    const imageUrl = this.extractImageUrl(item.description) ||
+                                   this.extractImageFromNPR(item) ||
+                                   `https://picsum.photos/300/150?random=${index}`;
+
+                    return {
+                        title: item.title,
+                        description: this.stripHtml(item.description).substring(0, 120) + '...',
+                        image: imageUrl,
+                        link: item.link,
+                        pubDate: item.pubDate
+                    };
+                });
+
+                console.log('Processed NPR news items:', this.newsItems);
             } else {
                 throw new Error('Failed to fetch RSS data');
             }
@@ -45,9 +53,70 @@ class NewsCarousel {
     }
 
     extractImageUrl(description) {
-        // Extract image URL from NPR's description HTML
-        const imgMatch = description.match(/<img[^>]+src="([^"]+)"/);
-        return imgMatch ? imgMatch[1] : null;
+        // Try multiple patterns for NPR images
+        console.log('Looking for image in:', description.substring(0, 200) + '...');
+
+        // Pattern 1: Standard img tag
+        let imgMatch = description.match(/<img[^>]+src="([^"]+)"/);
+        if (imgMatch) {
+            console.log('Found image with pattern 1:', imgMatch[1]);
+            return imgMatch[1];
+        }
+
+        // Pattern 2: NPR might use enclosure or media content
+        imgMatch = description.match(/enclosure[^>]+url="([^"]+)"/);
+        if (imgMatch) {
+            console.log('Found image with pattern 2:', imgMatch[1]);
+            return imgMatch[1];
+        }
+
+        // Pattern 3: Look for media:content
+        imgMatch = description.match(/<media:content[^>]+url="([^"]+)"/);
+        if (imgMatch) {
+            console.log('Found image with pattern 3:', imgMatch[1]);
+            return imgMatch[1];
+        }
+
+        console.log('No image found in description');
+        return null;
+    }
+
+    extractImageFromNPR(item) {
+        // Try NPR-specific patterns
+        console.log('Trying NPR-specific extraction for:', item.title);
+
+        // Pattern 4: Check if item has enclosure with image
+        if (item.enclosure && item.enclosure.type && item.enclosure.type.startsWith('image/')) {
+            console.log('Found enclosure image:', item.enclosure.url);
+            return item.enclosure.url;
+        }
+
+        // Pattern 5: Try to construct NPR image URL from guid or link
+        if (item.guid) {
+            // NPR often uses predictable image URL patterns
+            const guidMatch = item.guid.match(/\/(\d+)\//);
+            if (guidMatch) {
+                const articleId = guidMatch[1];
+                const constructedUrl = `https://media.npr.org/assets/img/2024/10/07/${articleId}_wide.jpg`;
+                console.log('Constructed NPR image URL:', constructedUrl);
+                return constructedUrl;
+            }
+        }
+
+        // Pattern 6: Try to get image from NPR's oembed or API
+        if (item.link) {
+            // Extract article ID from NPR URL
+            const nprMatch = item.link.match(/npr\.org\/(\d+)\//);
+            if (nprMatch) {
+                const articleId = nprMatch[1];
+                const imageUrl = `https://media.npr.org/assets/img/2024/10/07/gettyimages-${articleId}_wide.jpg`;
+                console.log('Trying NPR image pattern:', imageUrl);
+                return imageUrl;
+            }
+        }
+
+        console.log('No NPR-specific image found');
+        return null;
     }
 
     showFallbackNews() {
