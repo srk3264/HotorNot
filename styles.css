@@ -143,10 +143,10 @@ main {
 /* Hero Section - Shows before login */
 .hero-section {
     position: fixed;
-    top: 0;
+    top: 80px;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 80px);
     background-color: #EC6B15;
     display: flex;
     align-items: center;
