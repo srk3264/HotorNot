@@ -127,27 +127,27 @@ class NewsCarousel {
         // Pattern 7: Look for BBC media tags in the raw item structure
         console.log('Full item structure:', JSON.stringify(item, null, 2));
 
-        // Pattern 8: Check for media groups or media content in BBC RSS
+        // Pattern 8: BBC media:thumbnail with exact structure
         if (item.description) {
-            // BBC uses media:thumbnail and media:content tags
-            const mediaThumbnailMatch = item.description.match(/<media:thumbnail[^>]*url="([^"]*)"/);
+            // BBC uses: <media:thumbnail width="240" height="135" url="..."/>
+            const mediaThumbnailMatch = item.description.match(/<media:thumbnail[^>]+url="([^"]+)"/);
             if (mediaThumbnailMatch) {
                 console.log('Found BBC media:thumbnail:', mediaThumbnailMatch[1]);
                 return mediaThumbnailMatch[1];
             }
 
-            // Pattern 9: Look for media:content with image URLs
-            const mediaContentMatch = item.description.match(/<media:content[^>]*url="([^"]*\.(jpg|jpeg|png|gif))"/i);
+            // Pattern 9: Look for any BBC image URLs in description (ichef.bbci.co.uk)
+            const bbcImageMatch = item.description.match(/https:\/\/ichef\.bbci\.co\.uk\/[^"]+\.(jpg|jpeg|png|gif)/i);
+            if (bbcImageMatch) {
+                console.log('Found BBC iChef image URL:', bbcImageMatch[0]);
+                return bbcImageMatch[0];
+            }
+
+            // Pattern 10: Look for media:content tags
+            const mediaContentMatch = item.description.match(/<media:content[^>]+url="([^"]*\.(jpg|jpeg|png|gif))"/i);
             if (mediaContentMatch) {
                 console.log('Found BBC media:content image:', mediaContentMatch[1]);
                 return mediaContentMatch[1];
-            }
-
-            // Pattern 10: Look for any BBC image URLs in description
-            const bbcImageMatch = item.description.match(/(https:\/\/[^"]*\.(jpg|jpeg|png|gif)[^"]*)/i);
-            if (bbcImageMatch) {
-                console.log('Found BBC image URL:', bbcImageMatch[1]);
-                return bbcImageMatch[1];
             }
         }
 
