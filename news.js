@@ -14,13 +14,13 @@ class NewsCarousel {
     async fetchNews() {
         try {
             // Use RSS2JSON service to avoid CORS issues
-            const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://www.buzzfeed.com/politics.xml';
+            const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.npr.org/1001/rss.xml';
 
             const response = await fetch(rssUrl);
             const data = await response.json();
 
             if (data.status === 'ok' && data.items) {
-                console.log('=== BUZZFEED RSS DEBUG INFO ===');
+                console.log('=== NPR RSS DEBUG INFO ===');
                 console.log('Full first item:', JSON.stringify(data.items[0], null, 2));
 
                 // Extract first 3 items with images and descriptions
@@ -51,7 +51,7 @@ class NewsCarousel {
                 throw new Error('Failed to fetch RSS data');
             }
         } catch (error) {
-            console.error('Error fetching BuzzFeed news:', error);
+            console.error('Error fetching NPR news:', error);
             this.showFallbackNews();
         }
     }
@@ -234,9 +234,9 @@ class NewsCarousel {
         // Fallback news if RSS fails
         this.newsItems = [
             {
-                title: "BuzzFeed News Feed Unavailable",
+                title: "NPR News Feed Unavailable",
                 description: "Unable to load latest news. Please check back later.",
-                image: "https://via.placeholder.com/300x150?text=No+Image"
+                image: "https://picsum.photos/300/150?text=No+Image"
             }
         ];
     }
