@@ -249,7 +249,7 @@ class NewsCarousel {
                 <img src="${item.image}" alt="${item.title}" class="news-image"
                      onerror="this.style.display='none'; console.log('Image failed to load for:', this.alt)">
                 <div class="news-content">
-                    <h3 class="news-title">${item.title}</h3>
+                    <div class="news-title">${item.title}</div>
                     <p class="news-description">${item.description}</p>
                     <small class="news-date">${new Date(item.pubDate).toLocaleDateString()}</small>
                 </div>
