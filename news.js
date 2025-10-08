@@ -32,7 +32,7 @@ class NewsCarousel {
 
                     const imageUrl = this.extractImageUrl(item.description) ||
                                    this.extractImageFromBBC(item) ||
-                                   `https://picsum.photos/300/150?random=${index + 10}`;
+                                   this.extractMediaFromBBC(item);
 
                     console.log('Final image URL:', imageUrl);
 
@@ -121,6 +121,46 @@ class NewsCarousel {
         return null;
     }
 
+    extractMediaFromBBC(item) {
+        console.log('Trying BBC media tag extraction...');
+
+        // Pattern 7: Look for BBC media tags in the raw item structure
+        console.log('Full item structure:', JSON.stringify(item, null, 2));
+
+        // Pattern 8: Check for media groups or media content in BBC RSS
+        if (item.description) {
+            // BBC uses media:thumbnail and media:content tags
+            const mediaThumbnailMatch = item.description.match(/<media:thumbnail[^>]*url="([^"]*)"/);
+            if (mediaThumbnailMatch) {
+                console.log('Found BBC media:thumbnail:', mediaThumbnailMatch[1]);
+                return mediaThumbnailMatch[1];
+            }
+
+            // Pattern 9: Look for media:content with image URLs
+            const mediaContentMatch = item.description.match(/<media:content[^>]*url="([^"]*\.(jpg|jpeg|png|gif))"/i);
+            if (mediaContentMatch) {
+                console.log('Found BBC media:content image:', mediaContentMatch[1]);
+                return mediaContentMatch[1];
+            }
+
+            // Pattern 10: Look for any BBC image URLs in description
+            const bbcImageMatch = item.description.match(/(https:\/\/[^"]*\.(jpg|jpeg|png|gif)[^"]*)/i);
+            if (bbcImageMatch) {
+                console.log('Found BBC image URL:', bbcImageMatch[1]);
+                return bbcImageMatch[1];
+            }
+        }
+
+        // Pattern 11: Check if BBC RSS has media fields at item level
+        if (item.media && item.media.url) {
+            console.log('Found item-level media URL:', item.media.url);
+            return item.media.url;
+        }
+
+        console.log('No BBC media tag found');
+        return null;
+    }
+
     extractImageFromNPRStructure(item) {
         console.log('Trying NPR structure extraction...');
 
@@ -178,7 +218,7 @@ class NewsCarousel {
             {
                 title: "BBC News Feed Unavailable",
                 description: "Unable to load latest news. Please check back later.",
-                image: `https://picsum.photos/300/150?random=1`
+                image: "https://via.placeholder.com/300x150?text=No+Image"
             }
         ];
     }
@@ -197,7 +237,7 @@ class NewsCarousel {
             newsElement.className = 'news-item';
             newsElement.innerHTML = `
                 <img src="${item.image}" alt="${item.title}" class="news-image"
-                     onerror="this.src='https://picsum.photos/300/150?text=News'">
+                     onerror="this.style.display='none'; console.log('Image failed to load for:', this.alt)">
                 <div class="news-content">
                     <h3 class="news-title">${item.title}</h3>
                     <p class="news-description">${item.description}</p>
