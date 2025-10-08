@@ -347,7 +347,16 @@ class PostManager {
             const data = await response.json();
 
             if (data.status === 'ok' && data.items && data.items.length > 0) {
-                const item = data.items[0]; // Get the first (latest) item
+                // Initialize news index if not exists
+                if (!this.newsIndex) {
+                    this.newsIndex = 0;
+                }
+
+                // Get next news item in sequence
+                const item = data.items[this.newsIndex % data.items.length];
+
+                // Move to next item for next call
+                this.newsIndex++;
 
                 // Extract image URL using multiple patterns
                 let imageUrl = null;
