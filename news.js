@@ -14,13 +14,13 @@ class NewsCarousel {
     async fetchNews() {
         try {
             // Use RSS2JSON service to avoid CORS issues
-            const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.npr.org/1001/rss.xml';
+            const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.bbci.co.uk/news/rss.xml';
 
             const response = await fetch(rssUrl);
             const data = await response.json();
 
             if (data.status === 'ok' && data.items) {
-                console.log('=== NPR RSS DEBUG INFO ===');
+                console.log('=== BBC RSS DEBUG INFO ===');
                 console.log('Full first item:', JSON.stringify(data.items[0], null, 2));
 
                 // Extract first 3 items with images and descriptions
@@ -31,8 +31,7 @@ class NewsCarousel {
                     console.log('GUID:', item.guid);
 
                     const imageUrl = this.extractImageUrl(item.description) ||
-                                   this.extractImageFromNPR(item) ||
-                                   this.extractImageFromNPRStructure(item) ||
+                                   this.extractImageFromBBC(item) ||
                                    `https://picsum.photos/300/150?random=${index + 10}`;
 
                     console.log('Final image URL:', imageUrl);
@@ -52,7 +51,7 @@ class NewsCarousel {
                 throw new Error('Failed to fetch RSS data');
             }
         } catch (error) {
-            console.error('Error fetching NPR news:', error);
+            console.error('Error fetching BBC news:', error);
             this.showFallbackNews();
         }
     }
@@ -91,41 +90,34 @@ class NewsCarousel {
         return null;
     }
 
-    extractImageFromNPR(item) {
-        // Try NPR-specific patterns
-        console.log('Trying NPR-specific extraction for:', item.title);
+    extractImageFromBBC(item) {
+        // Try BBC-specific patterns for media and description
+        console.log('Trying BBC-specific extraction for:', item.title);
 
-        // Pattern 4: Check if item has enclosure with image
-        if (item.enclosure && item.enclosure.type && item.enclosure.type.startsWith('image/')) {
-            console.log('Found enclosure image:', item.enclosure.url);
+        // Pattern 4: Check for BBC media content in description
+        if (item.description) {
+            // BBC often embeds media URLs in description
+            const mediaMatch = item.description.match(/<media:thumbnail[^>]+url="([^"]+)"/);
+            if (mediaMatch) {
+                console.log('Found BBC media thumbnail:', mediaMatch[1]);
+                return mediaMatch[1];
+            }
+
+            // Pattern 5: Look for BBC image URLs in description
+            const bbcImgMatch = item.description.match(/https:\/\/[^"]+\.jpg|https:\/\/[^"]+\.png|https:\/\/[^"]+\.jpeg/);
+            if (bbcImgMatch) {
+                console.log('Found BBC image URL in description:', bbcImgMatch[0]);
+                return bbcImgMatch[0];
+            }
+        }
+
+        // Pattern 6: Check for BBC enclosure
+        if (item.enclosure && item.enclosure.url) {
+            console.log('Found BBC enclosure:', item.enclosure.url);
             return item.enclosure.url;
         }
 
-        // Pattern 5: Try to construct NPR image URL from guid or link
-        if (item.guid) {
-            // NPR often uses predictable image URL patterns
-            const guidMatch = item.guid.match(/\/(\d+)\//);
-            if (guidMatch) {
-                const articleId = guidMatch[1];
-                const constructedUrl = `https://media.npr.org/assets/img/2024/10/07/${articleId}_wide.jpg`;
-                console.log('Constructed NPR image URL:', constructedUrl);
-                return constructedUrl;
-            }
-        }
-
-        // Pattern 6: Try to get image from NPR's oembed or API
-        if (item.link) {
-            // Extract article ID from NPR URL
-            const nprMatch = item.link.match(/npr\.org\/(\d+)\//);
-            if (nprMatch) {
-                const articleId = nprMatch[1];
-                const imageUrl = `https://media.npr.org/assets/img/2024/10/07/gettyimages-${articleId}_wide.jpg`;
-                console.log('Trying NPR image pattern:', imageUrl);
-                return imageUrl;
-            }
-        }
-
-        console.log('No NPR-specific image found');
+        console.log('No BBC-specific image found');
         return null;
     }
 
@@ -184,7 +176,7 @@ class NewsCarousel {
         // Fallback news if RSS fails
         this.newsItems = [
             {
-                title: "NPR News Feed Unavailable",
+                title: "BBC News Feed Unavailable",
                 description: "Unable to load latest news. Please check back later.",
                 image: `https://picsum.photos/300/150?random=1`
             }
