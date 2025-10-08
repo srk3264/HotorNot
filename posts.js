@@ -398,8 +398,9 @@ class PostManager {
 
         return `
             <div class="news-item-card">
+                <div class="news-label">News</div>
                 <img src="${newsItem.image}" alt="${newsItem.title}" class="news-image"
-                     onerror="this.src='https://picsum.photos/300/150?text=News'; console.log('News image failed to load')">
+                     onerror="this.src='https://picsum.photos/300/150?text=NPR+News'; console.log('News image failed to load for:', this.alt)">
                 <div class="news-content">
                     <div class="news-title">${this.escapeHtml(newsItem.title)}</div>
                     <p class="news-description">${this.escapeHtml(newsItem.description)}</p>

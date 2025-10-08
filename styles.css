@@ -1415,20 +1415,33 @@ main {
 .news-item-card {
     width: 100%;
     max-width: 402px;
-    padding: 16px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    background: linear-gradient(135deg, #EC6B15 0%, #ff8c42 100%);
     border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.2);
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-bottom: 1.5rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.news-item-card::before {
+    content: '📰';
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 20px;
+    opacity: 0.3;
+    z-index: 1;
 }
 
 .news-item-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(236, 107, 21, 0.4);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .news-item-card .news-image {
@@ -1436,34 +1449,56 @@ main {
     height: 150px;
     object-fit: cover;
     border-radius: 8px;
-    background: #f0f0f0;
+    background: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .news-item-card .news-content {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    position: relative;
+    z-index: 2;
 }
 
 .news-item-card .news-title {
-    color: #2c3e50;
+    color: white;
     font-size: 18px;
     font-weight: 700;
     line-height: 1.3;
     margin: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .news-item-card .news-description {
-    color: #666;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 14px;
     line-height: 1.4;
     margin: 0;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .news-item-card .news-date {
-    color: #999;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 12px;
     margin-top: 4px;
+    font-weight: 500;
+}
+
+.news-item-card .news-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    z-index: 2;
 }
 
 /* Loading states */
