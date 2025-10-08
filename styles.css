@@ -155,7 +155,7 @@ main {
 }
 
 .hero-content {
-    text-align: center;
+    text-align: left;
     color: #000000;
     max-width: 1000px;
     padding: 2rem;
@@ -167,18 +167,16 @@ main {
     font-size: 120px;
     line-height: 120px;
     color: #000000;
-    margin: 0 0 2rem 0;
+    margin: 0 0 1rem 0;
 }
 
 .hero-subtitle {
     font-family: 'Inter', sans-serif;
     font-weight: 400;
-    font-size: 24px;
-    line-height: 1.4;
+    font-size: 120px;
+    line-height: 120px;
     color: #000000;
     margin: 0;
-    max-width: 800px;
-    margin: 0 auto;
 }
 
 
