@@ -20,13 +20,22 @@ class NewsCarousel {
             const data = await response.json();
 
             if (data.status === 'ok' && data.items) {
-                console.log('Raw RSS data:', data.items[0]); // Debug first item
+                console.log('=== NPR RSS DEBUG INFO ===');
+                console.log('Full first item:', JSON.stringify(data.items[0], null, 2));
 
                 // Extract first 3 items with images and descriptions
                 this.newsItems = data.items.slice(0, 3).map((item, index) => {
+                    console.log(`\n--- Processing Item ${index + 1} ---`);
+                    console.log('Title:', item.title);
+                    console.log('Link:', item.link);
+                    console.log('GUID:', item.guid);
+
                     const imageUrl = this.extractImageUrl(item.description) ||
                                    this.extractImageFromNPR(item) ||
-                                   `https://picsum.photos/300/150?random=${index}`;
+                                   this.extractImageFromNPRStructure(item) ||
+                                   `https://picsum.photos/300/150?random=${index + 10}`;
+
+                    console.log('Final image URL:', imageUrl);
 
                     return {
                         title: item.title,
@@ -37,7 +46,8 @@ class NewsCarousel {
                     };
                 });
 
-                console.log('Processed NPR news items:', this.newsItems);
+                console.log('\n=== FINAL PROCESSED ITEMS ===');
+                console.log(JSON.stringify(this.newsItems, null, 2));
             } else {
                 throw new Error('Failed to fetch RSS data');
             }
@@ -116,6 +126,57 @@ class NewsCarousel {
         }
 
         console.log('No NPR-specific image found');
+        return null;
+    }
+
+    extractImageFromNPRStructure(item) {
+        console.log('Trying NPR structure extraction...');
+
+        // Pattern 7: Check for content:encoded which might contain image data
+        if (item.content && item.content.length > 0) {
+            console.log('Found content field, length:', item.content.length);
+            const imgMatch = item.content.match(/<img[^>]+src="([^"]+)"/);
+            if (imgMatch) {
+                console.log('Found image in content:', imgMatch[1]);
+                return imgMatch[1];
+            }
+        }
+
+        // Pattern 8: Try different NPR URL patterns
+        if (item.link) {
+            // Extract slug from NPR URL
+            const slugMatch = item.link.match(/npr\.org\/(\d+\/\d+\/\d+\/[^\/]+)/);
+            if (slugMatch) {
+                const slug = slugMatch[1];
+                const imageUrl = `https://media.npr.org/assets/img/2024/10/07/${slug}_wide.jpg`;
+                console.log('Trying NPR slug pattern:', imageUrl);
+                return imageUrl;
+            }
+        }
+
+        // Pattern 9: Try direct media.npr.org construction
+        if (item.guid) {
+            const guidMatch = item.guid.match(/\/(\d+)$/);
+            if (guidMatch) {
+                const articleId = guidMatch[1];
+                const imageUrl = `https://media.npr.org/assets/img/2024/10/07/${articleId}_wide.jpg`;
+                console.log('Trying direct NPR media URL:', imageUrl);
+                return imageUrl;
+            }
+        }
+
+        // Pattern 10: Try thumbnail pattern
+        if (item.link) {
+            const nprMatch = item.link.match(/npr\.org\/(\d+)\//);
+            if (nprMatch) {
+                const articleId = nprMatch[1];
+                const imageUrl = `https://media.npr.org/assets/img/2024/10/07/${articleId}_thumb.jpg`;
+                console.log('Trying NPR thumbnail pattern:', imageUrl);
+                return imageUrl;
+            }
+        }
+
+        console.log('No NPR structure image found');
         return null;
     }
 
