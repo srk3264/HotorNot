@@ -14,13 +14,13 @@ class NewsCarousel {
     async fetchNews() {
         try {
             // Use RSS2JSON service to avoid CORS issues
-            const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.bbci.co.uk/news/rss.xml';
+            const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://www.buzzfeed.com/politics.xml';
 
             const response = await fetch(rssUrl);
             const data = await response.json();
 
             if (data.status === 'ok' && data.items) {
-                console.log('=== BBC RSS DEBUG INFO ===');
+                console.log('=== BUZZFEED RSS DEBUG INFO ===');
                 console.log('Full first item:', JSON.stringify(data.items[0], null, 2));
 
                 // Extract first 3 items with images and descriptions
@@ -31,8 +31,8 @@ class NewsCarousel {
                     console.log('GUID:', item.guid);
 
                     const imageUrl = this.extractImageUrl(item.description) ||
-                                   this.extractImageFromBBC(item) ||
-                                   this.extractMediaFromBBC(item);
+                                   this.extractImageFromBuzzFeed(item) ||
+                                   this.extractMediaFromBuzzFeed(item);
 
                     console.log('Final image URL:', imageUrl);
 
@@ -51,7 +51,7 @@ class NewsCarousel {
                 throw new Error('Failed to fetch RSS data');
             }
         } catch (error) {
-            console.error('Error fetching BBC news:', error);
+            console.error('Error fetching BuzzFeed news:', error);
             this.showFallbackNews();
         }
     }
@@ -90,39 +90,39 @@ class NewsCarousel {
         return null;
     }
 
-    extractImageFromBBC(item) {
-        // Try BBC-specific patterns for media and description
-        console.log('Trying BBC-specific extraction for:', item.title);
+    extractImageFromBuzzFeed(item) {
+        // Try BuzzFeed-specific patterns for media and description
+        console.log('Trying BuzzFeed-specific extraction for:', item.title);
 
-        // Pattern 4: Check for BBC media content in description
+        // Pattern 4: Check for BuzzFeed media content in description
         if (item.description) {
-            // BBC often embeds media URLs in description
+            // BuzzFeed often embeds media URLs in description
             const mediaMatch = item.description.match(/<media:thumbnail[^>]+url="([^"]+)"/);
             if (mediaMatch) {
-                console.log('Found BBC media thumbnail:', mediaMatch[1]);
+                console.log('Found BuzzFeed media thumbnail:', mediaMatch[1]);
                 return mediaMatch[1];
             }
 
-            // Pattern 5: Look for BBC image URLs in description
-            const bbcImgMatch = item.description.match(/https:\/\/[^"]+\.jpg|https:\/\/[^"]+\.png|https:\/\/[^"]+\.jpeg/);
-            if (bbcImgMatch) {
-                console.log('Found BBC image URL in description:', bbcImgMatch[0]);
-                return bbcImgMatch[0];
+            // Pattern 5: Look for BuzzFeed image URLs in description
+            const buzzFeedImgMatch = item.description.match(/https:\/\/[^"]+\.jpg|https:\/\/[^"]+\.png|https:\/\/[^"]+\.jpeg/);
+            if (buzzFeedImgMatch) {
+                console.log('Found BuzzFeed image URL in description:', buzzFeedImgMatch[0]);
+                return buzzFeedImgMatch[0];
             }
         }
 
-        // Pattern 6: Check for BBC enclosure
+        // Pattern 6: Check for BuzzFeed enclosure
         if (item.enclosure && item.enclosure.url) {
-            console.log('Found BBC enclosure:', item.enclosure.url);
+            console.log('Found BuzzFeed enclosure:', item.enclosure.url);
             return item.enclosure.url;
         }
 
-        console.log('No BBC-specific image found');
+        console.log('No BuzzFeed-specific image found');
         return null;
     }
 
-    extractMediaFromBBC(item) {
-        console.log('Trying BBC media tag extraction...');
+    extractMediaFromBuzzFeed(item) {
+        console.log('Trying BuzzFeed media tag extraction...');
         console.log('Full item structure:', JSON.stringify(item, null, 2));
 
         // Pattern 7: Check for media field in RSS2JSON structure
@@ -134,8 +134,8 @@ class NewsCarousel {
         // Pattern 8: Check for enclosures array (RSS2JSON sometimes puts media here)
         if (item.enclosures && item.enclosures.length > 0) {
             for (let enclosure of item.enclosures) {
-                if (enclosure.url && enclosure.url.includes('ichef.bbci.co.uk')) {
-                    console.log('Found BBC image in enclosures:', enclosure.url);
+                if (enclosure.url && (enclosure.url.includes('buzzfeed.com') || enclosure.url.match(/\.(jpg|jpeg|png|gif)$/i))) {
+                    console.log('Found BuzzFeed image in enclosures:', enclosure.url);
                     return enclosure.url;
                 }
             }
@@ -151,23 +151,31 @@ class NewsCarousel {
         if (item.description) {
             const mediaThumbnailMatch = item.description.match(/<media:thumbnail[^>]+url="([^"]+)"/);
             if (mediaThumbnailMatch) {
-                console.log('Found BBC media:thumbnail in description:', mediaThumbnailMatch[1]);
+                console.log('Found BuzzFeed media:thumbnail in description:', mediaThumbnailMatch[1]);
                 return mediaThumbnailMatch[1];
             }
         }
 
-        // Pattern 11: Check all string fields for iChef URLs
+        // Pattern 11: Check all string fields for BuzzFeed image URLs
         for (let key in item) {
-            if (typeof item[key] === 'string' && item[key].includes('ichef.bbci.co.uk')) {
-                const urlMatch = item[key].match(/https:\/\/ichef\.bbci\.co\.uk\/[^"]*\.(jpg|jpeg|png|gif)/i);
-                if (urlMatch) {
-                    console.log(`Found BBC iChef URL in ${key}:`, urlMatch[0]);
-                    return urlMatch[0];
+            if (typeof item[key] === 'string') {
+                // Look for BuzzFeed image URLs
+                const buzzFeedMatch = item[key].match(/https:\/\/[^"]*\.buzzfeed\.com[^"]*\.(jpg|jpeg|png|gif)/i);
+                if (buzzFeedMatch) {
+                    console.log(`Found BuzzFeed image URL in ${key}:`, buzzFeedMatch[0]);
+                    return buzzFeedMatch[0];
+                }
+
+                // Look for any image URLs in the field
+                const imageMatch = item[key].match(/https:\/\/[^"]*\.(jpg|jpeg|png|gif)/i);
+                if (imageMatch) {
+                    console.log(`Found image URL in ${key}:`, imageMatch[0]);
+                    return imageMatch[0];
                 }
             }
         }
 
-        console.log('No BBC media tag found in any field');
+        console.log('No BuzzFeed media tag found in any field');
         return null;
     }
 
@@ -226,7 +234,7 @@ class NewsCarousel {
         // Fallback news if RSS fails
         this.newsItems = [
             {
-                title: "BBC News Feed Unavailable",
+                title: "BuzzFeed News Feed Unavailable",
                 description: "Unable to load latest news. Please check back later.",
                 image: "https://via.placeholder.com/300x150?text=No+Image"
             }
