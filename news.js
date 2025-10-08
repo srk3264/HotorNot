@@ -123,41 +123,51 @@ class NewsCarousel {
 
     extractMediaFromBBC(item) {
         console.log('Trying BBC media tag extraction...');
-
-        // Pattern 7: Look for BBC media tags in the raw item structure
         console.log('Full item structure:', JSON.stringify(item, null, 2));
 
-        // Pattern 8: BBC media:thumbnail with exact structure
-        if (item.description) {
-            // BBC uses: <media:thumbnail width="240" height="135" url="..."/>
-            const mediaThumbnailMatch = item.description.match(/<media:thumbnail[^>]+url="([^"]+)"/);
-            if (mediaThumbnailMatch) {
-                console.log('Found BBC media:thumbnail:', mediaThumbnailMatch[1]);
-                return mediaThumbnailMatch[1];
-            }
-
-            // Pattern 9: Look for any BBC image URLs in description (ichef.bbci.co.uk)
-            const bbcImageMatch = item.description.match(/https:\/\/ichef\.bbci\.co\.uk\/[^"]+\.(jpg|jpeg|png|gif)/i);
-            if (bbcImageMatch) {
-                console.log('Found BBC iChef image URL:', bbcImageMatch[0]);
-                return bbcImageMatch[0];
-            }
-
-            // Pattern 10: Look for media:content tags
-            const mediaContentMatch = item.description.match(/<media:content[^>]+url="([^"]*\.(jpg|jpeg|png|gif))"/i);
-            if (mediaContentMatch) {
-                console.log('Found BBC media:content image:', mediaContentMatch[1]);
-                return mediaContentMatch[1];
-            }
-        }
-
-        // Pattern 11: Check if BBC RSS has media fields at item level
+        // Pattern 7: Check for media field in RSS2JSON structure
         if (item.media && item.media.url) {
-            console.log('Found item-level media URL:', item.media.url);
+            console.log('Found item.media.url:', item.media.url);
             return item.media.url;
         }
 
-        console.log('No BBC media tag found');
+        // Pattern 8: Check for enclosures array (RSS2JSON sometimes puts media here)
+        if (item.enclosures && item.enclosures.length > 0) {
+            for (let enclosure of item.enclosures) {
+                if (enclosure.url && enclosure.url.includes('ichef.bbci.co.uk')) {
+                    console.log('Found BBC image in enclosures:', enclosure.url);
+                    return enclosure.url;
+                }
+            }
+        }
+
+        // Pattern 9: Check for thumbnail field
+        if (item.thumbnail && item.thumbnail.url) {
+            console.log('Found item.thumbnail.url:', item.thumbnail.url);
+            return item.thumbnail.url;
+        }
+
+        // Pattern 10: Check for media:thumbnail in description (fallback)
+        if (item.description) {
+            const mediaThumbnailMatch = item.description.match(/<media:thumbnail[^>]+url="([^"]+)"/);
+            if (mediaThumbnailMatch) {
+                console.log('Found BBC media:thumbnail in description:', mediaThumbnailMatch[1]);
+                return mediaThumbnailMatch[1];
+            }
+        }
+
+        // Pattern 11: Check all string fields for iChef URLs
+        for (let key in item) {
+            if (typeof item[key] === 'string' && item[key].includes('ichef.bbci.co.uk')) {
+                const urlMatch = item[key].match(/https:\/\/ichef\.bbci\.co\.uk\/[^"]*\.(jpg|jpeg|png|gif)/i);
+                if (urlMatch) {
+                    console.log(`Found BBC iChef URL in ${key}:`, urlMatch[0]);
+                    return urlMatch[0];
+                }
+            }
+        }
+
+        console.log('No BBC media tag found in any field');
         return null;
     }
 
