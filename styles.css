@@ -140,6 +140,104 @@ main {
     padding: 2rem 1rem;
 }
 
+/* Hero Section - Shows before login */
+.hero-section {
+    min-height: calc(100vh - 80px);
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    width: 100%;
+    gap: 4rem;
+    color: #2c3e50;
+}
+
+.hero-text {
+    flex: 1;
+    max-width: 600px;
+}
+
+.hero-percentage {
+    font-size: 8rem;
+    font-weight: 900;
+    line-height: 0.9;
+    margin: 0 0 2rem 0;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-description {
+    font-size: 1.8rem;
+    font-weight: 400;
+    line-height: 1.3;
+    margin: 0;
+    color: #2c3e50;
+    max-width: 500px;
+}
+
+.hero-image {
+    flex: 0 0 400px;
+    text-align: center;
+    position: relative;
+}
+
+.subway-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1rem;
+}
+
+.hero-source {
+    font-size: 0.9rem;
+    color: rgba(44, 62, 80, 0.7);
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Responsive hero styles */
+@media (max-width: 768px) {
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .hero-percentage {
+        font-size: 6rem;
+    }
+
+    .hero-description {
+        font-size: 1.4rem;
+    }
+
+    .hero-image {
+        flex: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-percentage {
+        font-size: 4rem;
+    }
+
+    .hero-description {
+        font-size: 1.2rem;
+    }
+}
+
 
 
 
