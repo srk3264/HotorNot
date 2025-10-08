@@ -311,7 +311,7 @@ class PostManager {
         }
     }
 
-    displayPosts() {
+    async displayPosts() {
         const container = document.getElementById('posts-container');
 
         if (this.posts.length === 0) {
@@ -319,7 +319,104 @@ class PostManager {
             return;
         }
 
-        container.innerHTML = this.posts.map(post => this.createPostElement(post)).join('');
+        let content = [];
+
+        // Process posts in groups of 3, inserting news after each group
+        for (let i = 0; i < this.posts.length; i += 3) {
+            const group = this.posts.slice(i, i + 3);
+            content.push(...group.map(post => this.createPostElement(post)));
+
+            // Add news item after every 3 posts (except after the last group)
+            if (i + 3 < this.posts.length) {
+                const newsItem = await this.getNewsItem();
+                if (newsItem) {
+                    content.push(this.createNewsElement(newsItem));
+                }
+            }
+        }
+
+        container.innerHTML = content.join('');
+    }
+
+    async getNewsItem() {
+        try {
+            // Use RSS2JSON service to avoid CORS issues
+            const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.npr.org/1001/rss.xml';
+
+            const response = await fetch(rssUrl);
+            const data = await response.json();
+
+            if (data.status === 'ok' && data.items && data.items.length > 0) {
+                const item = data.items[0]; // Get the first (latest) item
+
+                // Extract image URL using multiple patterns
+                let imageUrl = null;
+
+                // Pattern 1: Check for media field
+                if (item.media && item.media.url) {
+                    imageUrl = item.media.url;
+                }
+                // Pattern 2: Check enclosures array
+                else if (item.enclosures && item.enclosures.length > 0) {
+                    for (let enclosure of item.enclosures) {
+                        if (enclosure.url && enclosure.url.match(/\.(jpg|jpeg|png|gif)$/i)) {
+                            imageUrl = enclosure.url;
+                            break;
+                        }
+                    }
+                }
+                // Pattern 3: Check description for img tags
+                else if (item.description) {
+                    const imgMatch = item.description.match(/<img[^>]+src="([^"]+)"/);
+                    if (imgMatch) {
+                        imageUrl = imgMatch[1];
+                    }
+                }
+
+                // Fallback to placeholder if no image found
+                if (!imageUrl) {
+                    imageUrl = "https://picsum.photos/300/150?text=NPR+News";
+                }
+
+                return {
+                    title: item.title,
+                    description: this.stripHtml(item.description).substring(0, 120) + '...',
+                    image: imageUrl,
+                    link: item.link,
+                    pubDate: item.pubDate
+                };
+            }
+        } catch (error) {
+            console.error('Error fetching news item:', error);
+        }
+
+        return null;
+    }
+
+    createNewsElement(newsItem) {
+        if (!newsItem) return '';
+
+        return `
+            <div class="news-item-card">
+                <img src="${newsItem.image}" alt="${newsItem.title}" class="news-image"
+                     onerror="this.src='https://picsum.photos/300/150?text=News'; console.log('News image failed to load')">
+                <div class="news-content">
+                    <div class="news-title">${this.escapeHtml(newsItem.title)}</div>
+                    <p class="news-description">${this.escapeHtml(newsItem.description)}</p>
+                    <small class="news-date">${new Date(newsItem.pubDate).toLocaleDateString()}</small>
+                </div>
+            </div>
+        `;
+    }
+
+    stripHtml(html) {
+        return html.replace(/<[^>]*>/g, '');
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     createPostElement(post) {
