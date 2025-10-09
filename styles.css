@@ -300,11 +300,17 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
 }
 
 .flame-svg {
-    width: 88vw;
-    height: 88vw;
+    width: 60vw;
+    height: 60vw;
+    max-width: 600px;
+    max-height: 600px;
     opacity: 1;
 }
 
