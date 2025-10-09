@@ -239,8 +239,8 @@ main.logged-in {
     text-align: center;
     position: relative;
     max-width: 600px;
-    height: 200px; /* Fixed height container */
-    display: flex;
+    height: 200px;
+    display: block;
     align-items: center;
     justify-content: center;
 }
