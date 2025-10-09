@@ -187,10 +187,6 @@ main.logged-in {
 
 .hand-gesture {
     flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
 }
 
 .hand-image {
@@ -198,12 +194,6 @@ main.logged-in {
     height: auto;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
     animation: float 3s ease-in-out infinite;
-}
-
-.drop-icon {
-    width: 32px;
-    height: 32px;
-    animation: dropPulse 2s ease-in-out infinite;
 }
 
 @keyframes float {
