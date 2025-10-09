@@ -183,15 +183,17 @@ main {
 
 .flame-icon {
     position: absolute;
-    top: -50px;
-    right: -50px;
-    z-index: 2;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 0;
+    overflow: hidden;
 }
 
 .flame-svg {
-    width: 100vw;
-    height: 100vw;
-    opacity: 1;
+    width: 120vw;
+    height: 120vw;
+    opacity: 0.7;
 }
 
 
