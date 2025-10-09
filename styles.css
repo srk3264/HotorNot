@@ -201,7 +201,7 @@ main.logged-in {
 
 .marquee-text.animate {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(-100%) scale(1);
 }
 
 @keyframes marqueeScroll {
