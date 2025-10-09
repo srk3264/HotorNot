@@ -162,7 +162,7 @@ main {
     text-align: left;
     color: #000000;
     /* max-width: 1000px; */
-    padding: 72px;
+    padding: 0 72px;
     z-index: 999;
 }
 
