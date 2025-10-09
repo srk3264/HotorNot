@@ -895,7 +895,7 @@ class MarqueeAnimation {
 // Initialize marquee animation
 const marqueeAnimation = new MarqueeAnimation();
 
-// Bold quote animation for Hot or Not brand
+// Slide In/Out quote animation for Hot or Not brand
 class QuoteAnimation {
     constructor() {
         this.quoteElements = document.querySelectorAll('.quote-item');
@@ -913,59 +913,67 @@ class QuoteAnimation {
     init() {
         if (this.quoteElements.length === 0) return;
 
-        // Set initial state - hide all quotes
-        this.quoteElements.forEach(element => {
+        // Set initial state - position all quotes off-screen
+        this.quoteElements.forEach((element, index) => {
             element.style.opacity = '0';
-            element.style.transform = 'translateY(30px) scale(0.8)';
+            element.style.transform = 'translateX(-100%)'; // Start from left
+            element.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         });
 
         // Start with first quote
         this.showQuote(0);
 
-        // Start bold rotation every 3 seconds
-        this.startBoldRotation();
+        // Start slide rotation every 4 seconds
+        this.startSlideRotation();
     }
 
     showQuote(index) {
         // Clear any existing animations
         this.clearAnimationTimeouts();
 
-        // Hide all quotes first
-        this.quoteElements.forEach(element => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(30px) scale(0.8)';
-        });
+        // First, slide out the current quote to the right
+        if (this.quoteElements[this.currentQuoteIndex]) {
+            this.quoteElements[this.currentQuoteIndex].style.transform = 'translateX(100%)';
+            this.quoteElements[this.currentQuoteIndex].style.opacity = '0';
+        }
 
-        // Show selected quote with bold animation
-        if (this.quoteElements[index]) {
-            const element = this.quoteElements[index];
+        // Then slide in the new quote from the left
+        setTimeout(() => {
+            if (this.quoteElements[index]) {
+                const element = this.quoteElements[index];
 
-            // Quick scale and fade in animation
-            setTimeout(() => {
+                // Reset position to left
+                element.style.transform = 'translateX(-100%)';
                 element.style.opacity = '1';
-                element.style.transform = 'translateY(0) scale(1)';
-                element.style.filter = 'drop-shadow(0 0 10px rgba(236, 107, 21, 0.3))';
 
-                // Add subtle pulse after entrance
+                // Trigger reflow
+                element.offsetHeight;
+
+                // Slide in from left to center
+                element.style.transform = 'translateX(0)';
+
+                // Add subtle glow effect after slide
                 setTimeout(() => {
-                    element.style.filter = 'drop-shadow(0 0 15px rgba(236, 107, 21, 0.5))';
+                    element.style.filter = 'drop-shadow(0 0 8px rgba(236, 107, 21, 0.2))';
                     setTimeout(() => {
-                        element.style.filter = 'drop-shadow(0 0 10px rgba(236, 107, 21, 0.3))';
+                        element.style.filter = 'drop-shadow(0 0 12px rgba(236, 107, 21, 0.3))';
                     }, 200);
                 }, 300);
-            }, 100);
-        }
+            }
+        }, 150); // Small delay between out and in
+
+        this.currentQuoteIndex = index;
     }
 
     nextQuote() {
-        this.currentQuoteIndex = (this.currentQuoteIndex + 1) % this.quotes.length;
-        this.showQuote(this.currentQuoteIndex);
+        const nextIndex = (this.currentQuoteIndex + 1) % this.quotes.length;
+        this.showQuote(nextIndex);
     }
 
-    startBoldRotation() {
+    startSlideRotation() {
         this.rotationInterval = setInterval(() => {
             this.nextQuote();
-        }, 3000); // 3 seconds for fast-paced brand
+        }, 4000); // 4 seconds for smooth pacing
     }
 
     clearAnimationTimeouts() {
