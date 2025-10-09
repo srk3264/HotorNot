@@ -804,6 +804,8 @@ class MarqueeAnimation {
         this.marqueeText = document.getElementById('marqueeText');
         this.quoteSection = document.getElementById('quote-section');
         this.observer = null;
+        this.lastScrollTop = 0;
+        this.isScrollingDown = true;
         this.init();
     }
 
@@ -812,6 +814,9 @@ class MarqueeAnimation {
 
         // Create intersection observer for scroll trigger
         this.setupScrollTrigger();
+
+        // Setup bidirectional scroll detection
+        this.setupScrollDirectionDetection();
 
         // Initial check in case element is already in view
         this.checkVisibility();
@@ -835,9 +840,45 @@ class MarqueeAnimation {
         this.observer.observe(this.quoteSection);
     }
 
+    setupScrollDirectionDetection() {
+        let ticking = false;
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    this.detectScrollDirection();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+    }
+
+    detectScrollDirection() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTop > this.lastScrollTop) {
+            // Scrolling down
+            this.isScrollingDown = true;
+            this.animateIn();
+        } else {
+            // Scrolling up
+            this.isScrollingDown = false;
+            this.animateOut();
+        }
+
+        this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For mobile or negative scrolling
+    }
+
     animateIn() {
         if (this.marqueeText) {
             this.marqueeText.classList.add('animate');
+        }
+    }
+
+    animateOut() {
+        if (this.marqueeText) {
+            this.marqueeText.classList.remove('animate');
         }
     }
 
