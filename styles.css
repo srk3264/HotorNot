@@ -189,7 +189,7 @@ main.logged-in {
     font-family: 'Inter', sans-serif;
     font-size: clamp(3rem, 8vw, 8rem);
     font-weight: 900;
-    color: #808080;
+    color: #dedada;
     text-align: center;
     letter-spacing: 0.05em;
     white-space: nowrap;
