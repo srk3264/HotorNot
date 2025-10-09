@@ -228,26 +228,24 @@ main.logged-in {
     position: relative;
     z-index: 2;
     opacity: 0;
-    transform: translateY(30px) scale(0.8) rotateX(15deg);
-    filter: blur(2px);
-    transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateY(20px) scale(0.9);
+    filter: blur(1px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .quote-text.active {
     opacity: 1;
-    transform: translateY(0) scale(1) rotateX(0deg);
+    transform: translateY(0) scale(1);
     filter: blur(0px);
-    animation: quotePulse 3s ease-in-out infinite;
+    animation: quoteFloat 4s ease-in-out infinite;
 }
 
-@keyframes quotePulse {
+@keyframes quoteFloat {
     0%, 100% {
-        transform: translateY(0) scale(1) rotateX(0deg);
-        text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        transform: translateY(0) scale(1);
     }
     50% {
-        transform: translateY(-8px) scale(1.05) rotateX(0deg);
-        text-shadow: 0 0 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(236, 107, 21, 0.2);
+        transform: translateY(-3px) scale(1.02);
     }
 }
 
