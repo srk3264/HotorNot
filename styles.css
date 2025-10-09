@@ -145,6 +145,11 @@ main {
     /* padding: 2rem 1rem; */
 }
 
+/* Add spacing between header and main content when logged in */
+main.logged-in {
+    margin-top: 32px;
+}
+
 /* Hero Section - Shows before login */
 .hero-section {
     position: relative;

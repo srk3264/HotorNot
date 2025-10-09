@@ -88,7 +88,11 @@ class AuthManager {
                     window.newsCarousel = new NewsCarousel();
                 }
             }
-            if (mainContent) mainContent.style.display = 'block';
+            if (mainContent) {
+                mainContent.style.display = 'block';
+                // Add logged-in class to main for spacing
+                document.querySelector('main').classList.add('logged-in');
+            }
             if (authBtn) authBtn.style.display = 'none';
             if (navMenu) navMenu.style.display = 'flex';
             if (createPostSection) createPostSection.style.display = 'block';
