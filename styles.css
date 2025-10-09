@@ -416,6 +416,32 @@ main.logged-in {
     opacity: 1;
 }
 
+/* Subway Animation System */
+.subway-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(100px) scale(0.8);
+    transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.subway-container.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.subway-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.9) contrast(1.1);
+}
+
 
 
 

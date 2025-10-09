@@ -895,6 +895,122 @@ class MarqueeAnimation {
 // Initialize marquee animation
 const marqueeAnimation = new MarqueeAnimation();
 
+// Scroll-Locked Subway Animation System
+class ScrollLockedSubwayAnimation {
+    constructor() {
+        this.subwayContainer = document.getElementById('subway-container');
+        this.subwayImage = document.getElementById('subway-image');
+        this.heroSection = document.getElementById('hero-section');
+        this.isScrollLocked = true;
+        this.hasSubwayTriggered = false;
+        this.unlockTimeout = null;
+        this.init();
+    }
+
+    init() {
+        if (!this.subwayContainer || !this.subwayImage || !this.heroSection) {
+            console.warn('Subway elements not found');
+            return;
+        }
+
+        // Lock scrolling initially
+        this.lockScrolling();
+
+        // Setup scroll detection (even when locked)
+        this.setupScrollDetection();
+
+        // Setup wheel/touch detection for immediate trigger
+        this.setupImmediateTrigger();
+
+        console.log('Scroll-locked subway system initialized');
+    }
+
+    lockScrolling() {
+        // Lock scrolling on body and html
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+
+        // Ensure we're at the top
+        window.scrollTo(0, 0);
+
+        this.isScrollLocked = true;
+        console.log('Scrolling locked');
+    }
+
+    unlockScrolling() {
+        // Unlock scrolling
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+
+        this.isScrollLocked = false;
+        console.log('Scrolling unlocked');
+    }
+
+    setupScrollDetection() {
+        // Detect scroll attempts even when locked
+        let scrollDetectionTimeout;
+
+        window.addEventListener('scroll', (e) => {
+            if (this.isScrollLocked && !this.hasSubwayTriggered) {
+                // Clear any existing timeout
+                if (scrollDetectionTimeout) {
+                    clearTimeout(scrollDetectionTimeout);
+                }
+
+                // Debounce scroll detection for immediate trigger
+                scrollDetectionTimeout = setTimeout(() => {
+                    this.triggerSubwayAnimation();
+                }, 50); // Very short delay for immediate feel
+            }
+        }, { passive: false });
+    }
+
+    setupImmediateTrigger() {
+        // Also detect wheel and touch events for immediate trigger
+        const immediateEvents = ['wheel', 'touchmove'];
+
+        immediateEvents.forEach(eventType => {
+            window.addEventListener(eventType, (e) => {
+                if (this.isScrollLocked && !this.hasSubwayTriggered) {
+                    e.preventDefault();
+                    this.triggerSubwayAnimation();
+                }
+            }, { passive: false });
+        });
+    }
+
+    triggerSubwayAnimation() {
+        if (this.hasSubwayTriggered) return;
+
+        this.hasSubwayTriggered = true;
+        console.log('Subway animation triggered');
+
+        // Start subway reveal animation
+        this.subwayContainer.classList.add('revealed');
+
+        // Unlock scrolling after animation completes (1.5s matches CSS transition)
+        this.unlockTimeout = setTimeout(() => {
+            this.unlockScrolling();
+        }, 1500);
+    }
+
+    // Method to manually trigger (for testing)
+    manualTrigger() {
+        this.triggerSubwayAnimation();
+    }
+
+    // Cleanup method
+    destroy() {
+        this.unlockScrolling();
+        if (this.unlockTimeout) {
+            clearTimeout(this.unlockTimeout);
+        }
+    }
+}
+
+// Initialize scroll-locked subway animation
+const scrollLockedSubway = new ScrollLockedSubwayAnimation();
+
 // Bounce Effect quote animation for Hot or Not brand
 class QuoteAnimation {
     constructor() {
