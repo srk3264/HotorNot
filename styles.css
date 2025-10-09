@@ -1357,8 +1357,12 @@ main {
         text-align: center;
     }
 
-    .hand-image {
-        width: 150px;
+    .hand-gesture {
+        display: none;
+    }
+
+    .quote-flame {
+        display: none;
     }
 
     .quote-text {
