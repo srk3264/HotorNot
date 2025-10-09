@@ -196,7 +196,7 @@ main.logged-in {
     opacity: 0;
     transform: translateY(50px) scale(0.8);
     transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    animation: marqueeScroll 15s linear infinite;
+    animation: none; /* ← REMOVED AUTO-PLAY */
 }
 
 .marquee-text.animate {
