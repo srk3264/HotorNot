@@ -243,6 +243,7 @@ main.logged-in {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden; /* ← PREVENT OVERFLOW */
 }
 
 .quote-text {
