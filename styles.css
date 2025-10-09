@@ -162,7 +162,7 @@ main {
     text-align: left;
     color: #000000;
     /* max-width: 1000px; */
-    padding: 0 72px;
+    padding: 0 16vw;
     z-index: 999;
 }
 
@@ -186,14 +186,14 @@ main {
 
 .flame-icon {
     position: inherit;
-    bottom: -50vw;
-    right: -16vw;
+    bottom: auto;
+    right: auto;
     z-index: 0;
 }
 
 .flame-svg {
-    width: 100vw;
-    height: 100vw;
+    width: 88vw;
+    height: 88vw;
     opacity: 1;
 }
 
