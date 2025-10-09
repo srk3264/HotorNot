@@ -1672,3 +1672,111 @@ main.logged-in {
         transform: rotate(360deg);
     }
 }
+
+/* Hot or Not Section */
+.hot-or-not-section {
+    background-color: #000000;
+    padding: 4rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    color: white;
+}
+
+.hot-or-not-container {
+    text-align: center;
+    max-width: 1000px;
+    width: 100%;
+}
+
+.intro-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 400;
+    color: #888;
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+}
+
+.hot-not-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 3rem 0;
+    flex-wrap: wrap;
+}
+
+.hot-word, .not-word {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.ot-word {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.or-word {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    font-weight: 400;
+    color: #888;
+    margin: 0 2rem;
+}
+
+.flame-icon-small, .poo-icon-small {
+    font-size: clamp(2rem, 6vw, 5rem);
+    margin: 0 1rem;
+    filter: drop-shadow(0 0 10px rgba(255, 165, 0, 0.6));
+    animation: iconPulse 2s ease-in-out infinite alternate;
+}
+
+.flame-icon-small {
+    color: #ff6b35;
+}
+
+.poo-icon-small {
+    color: #8b4513;
+}
+
+@keyframes iconPulse {
+    0% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 10px rgba(255, 165, 0, 0.6));
+    }
+    100% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 20px rgba(255, 165, 0, 0.8));
+    }
+}
+
+.post-hot-take-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    margin-top: 3rem;
+}
+
+.post-hot-take-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
