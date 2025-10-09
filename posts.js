@@ -761,8 +761,21 @@ class QuoteRotator {
     }
 
     nextQuote() {
-        this.currentQuote = (this.currentQuote + 1) % this.quotes.length;
-        this.showQuote(this.currentQuote);
+        // First, mark current quote as disappearing
+        if (this.quotes[this.currentQuote]) {
+            this.quotes[this.currentQuote].classList.add('disappearing');
+
+            // Wait for disappear animation to complete, then show next quote
+            setTimeout(() => {
+                this.quotes[this.currentQuote].classList.remove('disappearing');
+                this.currentQuote = (this.currentQuote + 1) % this.quotes.length;
+                this.showQuote(this.currentQuote);
+            }, 600); // Match CSS animation duration
+        } else {
+            // Fallback if no current quote
+            this.currentQuote = (this.currentQuote + 1) % this.quotes.length;
+            this.showQuote(this.currentQuote);
+        }
     }
 
     startRotation() {
