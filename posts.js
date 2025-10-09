@@ -652,7 +652,10 @@ class PostManager {
 
     clearPosts() {
         this.posts = [];
-        document.getElementById('posts-container').innerHTML = '';
+        const postsContainer = document.getElementById('posts-container');
+        if (postsContainer) {
+            postsContainer.innerHTML = '';
+        }
     }
 
     escapeHtml(text) {
