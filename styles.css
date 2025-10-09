@@ -167,9 +167,6 @@ main.logged-in {
 /* Quote Section */
 .quote-section {
     background-color: #ffffff;
-    background-image: radial-gradient(circle at center center, #e9c5a0, #ffffff), repeating-radial-gradient(circle at center center, #e9c5a0, #e9c5a0, 40px, transparent 80px, transparent 40px);
-    background-blend-mode: multiply;
-    opacity: 0.1;
     padding: 4rem 2rem;
     display: flex;
     align-items: center;
