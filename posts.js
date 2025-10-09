@@ -895,7 +895,7 @@ class MarqueeAnimation {
 // Initialize marquee animation
 const marqueeAnimation = new MarqueeAnimation();
 
-// Slide In/Out quote animation for Hot or Not brand
+// Bounce Effect quote animation for Hot or Not brand
 class QuoteAnimation {
     constructor() {
         this.quoteElements = document.querySelectorAll('.quote-item');
@@ -913,54 +913,59 @@ class QuoteAnimation {
     init() {
         if (this.quoteElements.length === 0) return;
 
-        // Set initial state - position all quotes off-screen
+        // Set initial state - hide all quotes
         this.quoteElements.forEach((element, index) => {
             element.style.opacity = '0';
-            element.style.transform = 'translateY(-100%)'; // Start from top
-            element.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            element.style.transform = 'translateY(50px) scale(0.3)';
         });
 
         // Start with first quote
         this.showQuote(0);
 
-        // Start slide rotation every 4 seconds
-        this.startSlideRotation();
+        // Start bounce rotation every 3.5 seconds
+        this.startBounceRotation();
     }
 
     showQuote(index) {
         // Clear any existing animations
         this.clearAnimationTimeouts();
 
-        // First, slide out the current quote downward
+        // Hide current quote with bounce out
         if (this.quoteElements[this.currentQuoteIndex]) {
-            this.quoteElements[this.currentQuoteIndex].style.transform = 'translateY(100%)';
-            this.quoteElements[this.currentQuoteIndex].style.opacity = '0';
+            const currentElement = this.quoteElements[this.currentQuoteIndex];
+            currentElement.style.animation = 'bounceOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards';
         }
 
-        // Then slide in the new quote from the top
+        // Show new quote with bounce in
         setTimeout(() => {
             if (this.quoteElements[index]) {
                 const element = this.quoteElements[index];
 
-                // Reset position to top
-                element.style.transform = 'translateY(-100%)';
-                element.style.opacity = '1';
+                // Reset to starting position
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(50px) scale(0.3)';
+                element.style.animation = 'none';
 
                 // Trigger reflow
                 element.offsetHeight;
 
-                // Slide in from top to center
-                element.style.transform = 'translateY(0)';
+                // Start bounce in animation
+                element.style.animation = 'bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards';
 
-                // Add subtle glow effect after slide
+                // Add brand glow effect after bounce
                 setTimeout(() => {
-                    element.style.filter = 'drop-shadow(0 0 8px rgba(236, 107, 21, 0.2))';
+                    element.style.filter = 'drop-shadow(0 0 10px rgba(236, 107, 21, 0.3))';
+
+                    // Pulse effect for extra energy
                     setTimeout(() => {
-                        element.style.filter = 'drop-shadow(0 0 12px rgba(236, 107, 21, 0.3))';
+                        element.style.filter = 'drop-shadow(0 0 15px rgba(236, 107, 21, 0.5))';
+                        setTimeout(() => {
+                            element.style.filter = 'drop-shadow(0 0 10px rgba(236, 107, 21, 0.3))';
+                        }, 250);
                     }, 200);
-                }, 300);
+                }, 600);
             }
-        }, 150); // Small delay between out and in
+        }, 200);
 
         this.currentQuoteIndex = index;
     }
@@ -970,10 +975,10 @@ class QuoteAnimation {
         this.showQuote(nextIndex);
     }
 
-    startSlideRotation() {
+    startBounceRotation() {
         this.rotationInterval = setInterval(() => {
             this.nextQuote();
-        }, 4000); // 4 seconds for smooth pacing
+        }, 3500); // 3.5 seconds for energetic pacing
     }
 
     clearAnimationTimeouts() {
