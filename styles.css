@@ -171,12 +171,13 @@ main {
 
 .quote-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4rem;
+    gap: 2rem;
     max-width: 1200px;
     width: 100%;
-    min-height: 100%;
+    text-align: center;
 }
 
 .hand-gesture {
