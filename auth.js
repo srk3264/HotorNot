@@ -70,6 +70,7 @@ class AuthManager {
 
     updateUI() {
         const heroSection = document.getElementById('hero-section');
+        const quoteSection = document.getElementById('quote-section');
         const newsCarousel = document.getElementById('news-carousel');
         const mainContent = document.getElementById('main-content');
         const authBtn = document.getElementById('auth-btn');
@@ -77,8 +78,9 @@ class AuthManager {
         const createPostSection = document.getElementById('create-post');
 
         if (this.currentUser) {
-            // User is logged in - show everything except hero
+            // User is logged in - show everything except hero and quote
             if (heroSection) heroSection.style.display = 'none';
+            if (quoteSection) quoteSection.style.display = 'none';
             if (newsCarousel) {
                 newsCarousel.style.display = 'block';
                 // Initialize carousel if not already done
@@ -91,8 +93,9 @@ class AuthManager {
             if (navMenu) navMenu.style.display = 'flex';
             if (createPostSection) createPostSection.style.display = 'block';
         } else {
-            // User is not logged in - only show hero and login
+            // User is not logged in - only show hero, quote and login
             if (heroSection) heroSection.style.display = 'flex';
+            if (quoteSection) quoteSection.style.display = 'flex';
             if (newsCarousel) newsCarousel.style.display = 'none';
             if (mainContent) mainContent.style.display = 'none';
             if (authBtn) authBtn.style.display = 'inline';
