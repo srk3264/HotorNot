@@ -175,6 +175,15 @@ main {
     margin: 0 0 1rem 0;
 }
 
+/* Desktop title: show on desktop, hide on mobile */
+.desktop-title {
+    display: none;
+}
+
+.mobile-title {
+    display: block;
+}
+
 .hero-subtitle {
     font-family: 'Inter', sans-serif;
     font-weight: 800;
@@ -1193,9 +1202,13 @@ main {
 
 /* Responsive design */
 @media (min-width: 769px) {
-    /* Desktop: Show full title text */
-    .hero-title::after {
-        content: attr(data-desktop-text);
+    /* Desktop: Show desktop title, hide mobile title */
+    .desktop-title {
+        display: block;
+    }
+
+    .mobile-title {
+        display: none;
     }
 
     .hero-title {
