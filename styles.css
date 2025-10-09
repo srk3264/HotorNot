@@ -162,7 +162,7 @@ main {
     text-align: left;
     color: #000000;
     /* max-width: 1000px; */
-    padding: 1.5rem;
+    padding: 0 72px;
     z-index: 999;
 }
 
@@ -1191,6 +1191,10 @@ main {
 
 /* Responsive design */
 @media (max-width: 600px) {
+    .hero-content {
+        padding: 0 16px;
+    }
+
     header {
         flex-direction: row;
         gap: 1rem;
