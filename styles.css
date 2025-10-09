@@ -158,6 +158,106 @@ main {
     z-index: 1;
 }
 
+/* Quote Section */
+.quote-section {
+    background-color: #ffffff;
+    padding: 4rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+
+.quote-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4rem;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.hand-gesture {
+    flex-shrink: 0;
+}
+
+.hand-image {
+    width: 200px;
+    height: auto;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.quote-content {
+    text-align: center;
+    position: relative;
+    max-width: 600px;
+}
+
+.quote-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #2c3e50;
+    margin: 2rem 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    z-index: 2;
+}
+
+.quote-text blockquote {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.drop-icon {
+    width: 24px;
+    height: 24px;
+    animation: dropPulse 2s ease-in-out infinite;
+}
+
+@keyframes dropPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; }
+}
+
+.quote-flame {
+    font-size: 3rem;
+    animation: flameFlicker 1.5s ease-in-out infinite;
+    position: absolute;
+}
+
+.top-flame {
+    top: -3rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bottom-flame {
+    bottom: -3rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@keyframes flameFlicker {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+    50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+}
+
 .hero-content {
     text-align: left;
     color: #000000;
@@ -1242,6 +1342,25 @@ main {
     .flame-svg {
         width: 250%;
         height: 120%;
+    }
+
+    /* Quote section mobile styles */
+    .quote-section {
+        padding: 2rem 1rem;
+    }
+
+    .quote-container {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .hand-image {
+        width: 150px;
+    }
+
+    .quote-text {
+        font-size: 1.8rem;
     }
 }
 
