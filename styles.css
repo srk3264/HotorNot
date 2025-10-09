@@ -186,9 +186,8 @@ main {
 
 .flame-icon {
     position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
+    bottom: 2rem;
+    right: 2rem;
     z-index: 0;
     overflow: hidden;
 }
