@@ -250,9 +250,11 @@ main.logged-in {
     position: relative;
     max-width: 600px;
     height: 200px;
-    display: block;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .quote-text {
