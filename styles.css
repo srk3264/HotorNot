@@ -1728,6 +1728,11 @@ main.logged-in {
     color: white;
 }
 
+/* Hide Hot or Not section when logged in */
+body.logged-in .hot-or-not-section {
+    display: none !important;
+}
+
 .hot-or-not-container {
     text-align: center;
     max-width: 1000px;
