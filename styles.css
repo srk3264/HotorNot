@@ -1188,9 +1188,37 @@ main {
 }
 
 /* Responsive design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 0;
+        justify-content: flex-start;
+        padding-top: 2rem;
+    }
+
+    .hero-content {
+        padding: 0 2rem;
+        text-align: center;
+    }
+
+    .hero-title, .hero-subtitle {
+        font-size: 4rem;
+        line-height: 4rem;
+    }
+
+    .flame-svg {
+        width: 120vw;
+        height: 120vw;
+    }
+}
+
 @media (max-width: 600px) {
     .hero-content {
         padding: 0 16px;
+    }
+
+    .hero-title, .hero-subtitle {
+        font-size: 3rem;
+        line-height: 3rem;
     }
 
     header {
