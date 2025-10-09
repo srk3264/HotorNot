@@ -1740,12 +1740,12 @@ body.logged-in .hot-or-not-section {
 }
 
 .intro-text {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.38);
     font-family: Inter;
-    font-size: 120px;
+    font-size: clamp(3rem, 8vw, 8rem);
     font-style: normal;
     font-weight: 900;
-    line-height: 120px; /* 100% */
+    line-height: 1;
 }
 
 .hot-not-display {
