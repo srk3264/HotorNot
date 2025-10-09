@@ -1342,8 +1342,10 @@ main {
     }
 
     .flame-svg {
-        width: 250%;
-        height: 120%;
+        width: 120vw;
+        height: 120vw;
+        max-width: 400px;
+        max-height: 400px;
     }
 
     /* Quote section mobile styles */
