@@ -160,7 +160,8 @@ main {
     text-align: left;
     color: #000000;
     max-width: 1000px;
-    padding: 2rem;
+    padding: 0rem;
+    z-index: 999;
 }
 
 .hero-title {
