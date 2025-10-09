@@ -189,9 +189,9 @@ main {
 }
 
 .flame-svg {
-    width: 300px;
-    height: 300px;
-    opacity: 0.9;
+    width: 100vw;
+    height: 100vw;
+    opacity: 1;
 }
 
 
