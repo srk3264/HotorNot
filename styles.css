@@ -187,7 +187,7 @@ main.logged-in {
 
 .marquee-text {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(3rem, 8vw, 8rem);
+    font-size: 16vw;
     font-weight: 900;
     color: #dedada;
     text-align: center;
