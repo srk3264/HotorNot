@@ -185,11 +185,10 @@ main {
 }
 
 .flame-icon {
-    position: absolute;
-    bottom: 2rem;
-    right: 2rem;
+    position: inherit;
+    bottom: -50vw;
+    right: -16vw;
     z-index: 0;
-    overflow: hidden;
 }
 
 .flame-svg {
