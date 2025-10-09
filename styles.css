@@ -225,16 +225,7 @@ main {
     flex-wrap: wrap;
 }
 
-.drop-icon {
-    width: 24px;
-    height: 24px;
-    animation: dropPulse 2s ease-in-out infinite;
-}
 
-@keyframes dropPulse {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.2); opacity: 1; }
-}
 
 .quote-flame {
     font-size: 3rem;
