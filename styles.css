@@ -1188,6 +1188,18 @@ main {
 }
 
 /* Responsive design */
+@media (min-width: 769px) {
+    /* Desktop: Show full title text */
+    .hero-title::after {
+        content: attr(data-desktop-text);
+    }
+
+    .hero-title {
+        font-size: 120px;
+        line-height: 120px;
+    }
+}
+
 @media (max-width: 768px) {
     .hero-section {
         padding: 0;
@@ -1200,14 +1212,19 @@ main {
         text-align: center;
     }
 
-    .hero-title, .hero-subtitle {
+    .hero-title {
+        font-size: 5rem;
+        line-height: 5rem;
+    }
+
+    .hero-subtitle {
         font-size: 4rem;
         line-height: 4rem;
     }
 
     .flame-svg {
-        width: 120vw;
-        height: 120vw;
+        width: 150%;
+        height: 100%;
     }
 }
 
@@ -1216,7 +1233,12 @@ main {
         padding: 0 16px;
     }
 
-    .hero-title, .hero-subtitle {
+    .hero-title {
+        font-size: 4rem;
+        line-height: 4rem;
+    }
+
+    .hero-subtitle {
         font-size: 3rem;
         line-height: 3rem;
     }
