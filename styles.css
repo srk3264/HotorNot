@@ -1193,17 +1193,14 @@ main {
 
 /* Responsive design */
 @media (min-width: 769px) {
-    /* Desktop: Show desktop text via pseudo-element */
-    .hero-title {
-        color: transparent;
-        font-size: 120px;
-        line-height: 120px;
-    }
-
+    /* Desktop: Show full title text */
     .hero-title::after {
         content: attr(data-desktop-text);
-        color: #000000;
-        position: absolute;
+    }
+
+    .hero-title {
+        font-size: 120px;
+        line-height: 120px;
     }
 }
 
