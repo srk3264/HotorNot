@@ -729,5 +729,58 @@ function viewUserProfile(userId) {
     window.location.href = `profile.html?userId=${userId}`;
 }
 
+// Quote rotation system
+class QuoteRotator {
+    constructor() {
+        this.quotes = document.querySelectorAll('.quote-text');
+        this.currentQuote = 0;
+        this.intervalId = null;
+        this.init();
+    }
+
+    init() {
+        if (this.quotes.length === 0) return;
+
+        // Start with first quote visible
+        this.showQuote(0);
+
+        // Start rotation every 3 seconds
+        this.startRotation();
+    }
+
+    showQuote(index) {
+        // Hide all quotes
+        this.quotes.forEach(quote => {
+            quote.classList.remove('active');
+        });
+
+        // Show selected quote
+        if (this.quotes[index]) {
+            this.quotes[index].classList.add('active');
+        }
+    }
+
+    nextQuote() {
+        this.currentQuote = (this.currentQuote + 1) % this.quotes.length;
+        this.showQuote(this.currentQuote);
+    }
+
+    startRotation() {
+        this.intervalId = setInterval(() => {
+            this.nextQuote();
+        }, 3000); // 3 seconds
+    }
+
+    stopRotation() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+}
+
 // Initialize post manager
 const postManager = new PostManager();
+
+// Initialize quote rotator
+const quoteRotator = new QuoteRotator();

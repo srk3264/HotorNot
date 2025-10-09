@@ -221,6 +221,24 @@ main.logged-in {
     margin: 2rem 0;
     position: relative;
     z-index: 2;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quote-text.active {
+    opacity: 1;
+    transform: translateY(0);
+    animation: quoteBounce 3s ease-in-out infinite;
+}
+
+@keyframes quoteBounce {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.02);
+    }
 }
 
 .quote-text blockquote {
