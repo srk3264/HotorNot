@@ -267,6 +267,11 @@ main.logged-in {
     opacity: 0;
     transform: translateY(50px) scale(0.3);
     transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding: 0 1rem;
+    box-sizing: border-box;
 }
 
 .quote-text.active {
