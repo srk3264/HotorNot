@@ -894,3 +894,56 @@ class MarqueeAnimation {
 
 // Initialize marquee animation
 const marqueeAnimation = new MarqueeAnimation();
+
+// Quote rotation animation
+class QuoteAnimation {
+    constructor() {
+        this.quotes = document.querySelectorAll('.quote-item');
+        this.currentQuote = 0;
+        this.intervalId = null;
+        this.init();
+    }
+
+    init() {
+        if (this.quotes.length === 0) return;
+
+        // Start with first quote visible
+        this.showQuote(0);
+
+        // Start rotation every 4 seconds
+        this.startRotation();
+    }
+
+    showQuote(index) {
+        // Hide all quotes
+        this.quotes.forEach(quote => {
+            quote.classList.remove('active');
+        });
+
+        // Show selected quote
+        if (this.quotes[index]) {
+            this.quotes[index].classList.add('active');
+        }
+    }
+
+    nextQuote() {
+        this.currentQuote = (this.currentQuote + 1) % this.quotes.length;
+        this.showQuote(this.currentQuote);
+    }
+
+    startRotation() {
+        this.intervalId = setInterval(() => {
+            this.nextQuote();
+        }, 4000); // 4 seconds
+    }
+
+    stopRotation() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+}
+
+// Initialize quote animation
+const quoteAnimation = new QuoteAnimation();
