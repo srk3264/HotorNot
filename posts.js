@@ -938,25 +938,33 @@ class QuoteAnimation {
         // Clear any existing timeouts
         this.clearTypewriterTimeouts();
 
+        // Hide all quotes first
+        this.quoteElements.forEach(element => {
+            element.textContent = '';
+            element.style.opacity = '0';
+        });
+
         const element = this.quoteElements[quoteIndex];
         const originalText = this.quotes[quoteIndex];
         let charIndex = 0;
 
-        // Clear the element first
-        element.textContent = '';
+        // Fade in the quote element
+        setTimeout(() => {
+            element.style.opacity = '1';
 
-        // Typewriter function
-        const type = () => {
-            if (charIndex < originalText.length) {
-                element.textContent += originalText.charAt(charIndex);
-                charIndex++;
-                const timeout = setTimeout(type, 50); // 50ms delay between characters
-                this.typewriterTimeouts.push(timeout);
-            }
-        };
+            // Typewriter function
+            const type = () => {
+                if (charIndex < originalText.length) {
+                    element.textContent += originalText.charAt(charIndex);
+                    charIndex++;
+                    const timeout = setTimeout(type, 50); // 50ms delay between characters
+                    this.typewriterTimeouts.push(timeout);
+                }
+            };
 
-        // Start typing
-        type();
+            // Start typing
+            type();
+        }, 100); // Small delay for fade in effect
     }
 
     clearTypewriterTimeouts() {
