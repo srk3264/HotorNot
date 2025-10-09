@@ -916,7 +916,7 @@ class QuoteAnimation {
         // Set initial state - position all quotes off-screen
         this.quoteElements.forEach((element, index) => {
             element.style.opacity = '0';
-            element.style.transform = 'translateX(-100%)'; // Start from left
+            element.style.transform = 'translateY(-100%)'; // Start from top
             element.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         });
 
@@ -931,26 +931,26 @@ class QuoteAnimation {
         // Clear any existing animations
         this.clearAnimationTimeouts();
 
-        // First, slide out the current quote to the right
+        // First, slide out the current quote downward
         if (this.quoteElements[this.currentQuoteIndex]) {
-            this.quoteElements[this.currentQuoteIndex].style.transform = 'translateX(100%)';
+            this.quoteElements[this.currentQuoteIndex].style.transform = 'translateY(100%)';
             this.quoteElements[this.currentQuoteIndex].style.opacity = '0';
         }
 
-        // Then slide in the new quote from the left
+        // Then slide in the new quote from the top
         setTimeout(() => {
             if (this.quoteElements[index]) {
                 const element = this.quoteElements[index];
 
-                // Reset position to left
-                element.style.transform = 'translateX(-100%)';
+                // Reset position to top
+                element.style.transform = 'translateY(-100%)';
                 element.style.opacity = '1';
 
                 // Trigger reflow
                 element.offsetHeight;
 
-                // Slide in from left to center
-                element.style.transform = 'translateX(0)';
+                // Slide in from top to center
+                element.style.transform = 'translateY(0)';
 
                 // Add subtle glow effect after slide
                 setTimeout(() => {
