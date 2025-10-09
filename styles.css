@@ -1776,25 +1776,7 @@ main.logged-in {
     margin: 0 2rem;
 }
 
-.flame-icon-small, .poo-icon-small {
-    display: inline-block;
-    width: clamp(60px, 8vw, 100px);
-    height: clamp(60px, 8vw, 100px);
-    margin: 0 1rem;
-    filter: drop-shadow(0 0 10px rgba(255, 165, 0, 0.6));
-    animation: iconPulse 2s ease-in-out infinite alternate;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
 
-.flame-icon-small {
-    background-image: url('images/Flame.png');
-}
-
-.poo-icon-small {
-    background-image: url('images/poo.png');
-}
 
 @keyframes iconPulse {
     0% {
