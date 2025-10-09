@@ -194,9 +194,9 @@ main {
 }
 
 .flame-svg {
-    width: 120vw;
-    height: 120vw;
-    opacity: 0.7;
+    width: 100vw;
+    height: 100vw;
+    opacity: 1;
 }
 
 
