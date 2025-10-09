@@ -196,11 +196,21 @@ main.logged-in {
     opacity: 0;
     transform: translateY(50px) scale(0.8);
     transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: marqueeScroll 15s linear infinite;
 }
 
 .marquee-text.animate {
     opacity: 1;
     transform: translateY(0) scale(1);
+}
+
+@keyframes marqueeScroll {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 .quote-container {
