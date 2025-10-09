@@ -895,52 +895,80 @@ class MarqueeAnimation {
 // Initialize marquee animation
 const marqueeAnimation = new MarqueeAnimation();
 
-// Quote rotation animation
+// Quote typewriter animation
 class QuoteAnimation {
     constructor() {
-        this.quotes = document.querySelectorAll('.quote-item');
-        this.currentQuote = 0;
-        this.intervalId = null;
+        this.quoteElements = document.querySelectorAll('.quote-item');
+        this.currentQuoteIndex = 0;
+        this.typewriterTimeouts = [];
+        this.rotationInterval = null;
+        this.quotes = [
+            "The UN is basically cosplay for world leaders now.",
+            "Pineapple on pizza is actually fire",
+            "I'd prefer Zuck over Elon any day!"
+        ];
         this.init();
     }
 
     init() {
-        if (this.quotes.length === 0) return;
+        if (this.quoteElements.length === 0) return;
 
-        // Start with first quote visible
-        this.showQuote(0);
-
-        // Start rotation every 4 seconds
-        this.startRotation();
-    }
-
-    showQuote(index) {
-        // Hide all quotes
-        this.quotes.forEach(quote => {
-            quote.classList.remove('active');
+        // Initialize quote elements with empty text
+        this.quoteElements.forEach((element, index) => {
+            element.textContent = '';
+            element.setAttribute('data-original-text', this.quotes[index] || element.textContent);
         });
 
-        // Show selected quote
-        if (this.quotes[index]) {
-            this.quotes[index].classList.add('active');
-        }
+        // Start the typewriter rotation
+        this.startTypewriterRotation();
     }
 
-    nextQuote() {
-        this.currentQuote = (this.currentQuote + 1) % this.quotes.length;
-        this.showQuote(this.currentQuote);
+    startTypewriterRotation() {
+        // Start with first quote
+        this.typeWriter(0);
+
+        // Set up rotation every 5 seconds
+        this.rotationInterval = setInterval(() => {
+            this.currentQuoteIndex = (this.currentQuoteIndex + 1) % this.quotes.length;
+            this.typeWriter(this.currentQuoteIndex);
+        }, 5000);
     }
 
-    startRotation() {
-        this.intervalId = setInterval(() => {
-            this.nextQuote();
-        }, 4000); // 4 seconds
+    typeWriter(quoteIndex) {
+        // Clear any existing timeouts
+        this.clearTypewriterTimeouts();
+
+        const element = this.quoteElements[quoteIndex];
+        const originalText = this.quotes[quoteIndex];
+        let charIndex = 0;
+
+        // Clear the element first
+        element.textContent = '';
+
+        // Typewriter function
+        const type = () => {
+            if (charIndex < originalText.length) {
+                element.textContent += originalText.charAt(charIndex);
+                charIndex++;
+                const timeout = setTimeout(type, 50); // 50ms delay between characters
+                this.typewriterTimeouts.push(timeout);
+            }
+        };
+
+        // Start typing
+        type();
+    }
+
+    clearTypewriterTimeouts() {
+        this.typewriterTimeouts.forEach(timeout => clearTimeout(timeout));
+        this.typewriterTimeouts = [];
     }
 
     stopRotation() {
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
+        this.clearTypewriterTimeouts();
+        if (this.rotationInterval) {
+            clearInterval(this.rotationInterval);
+            this.rotationInterval = null;
         }
     }
 }
