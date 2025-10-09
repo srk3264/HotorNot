@@ -71,6 +71,7 @@ class AuthManager {
     updateUI() {
         const heroSection = document.getElementById('hero-section');
         const quoteSection = document.getElementById('quote-section');
+        const hotOrNotSection = document.querySelector('.hot-or-not-section');
         const newsCarousel = document.getElementById('news-carousel');
         const mainContent = document.getElementById('main-content');
         const authBtn = document.getElementById('auth-btn');
@@ -78,9 +79,14 @@ class AuthManager {
         const createPostSection = document.getElementById('create-post');
 
         if (this.currentUser) {
-            // User is logged in - show everything except hero and quote
+            // User is logged in - hide pre-login sections and show main content
             if (heroSection) heroSection.style.display = 'none';
             if (quoteSection) quoteSection.style.display = 'none';
+            if (hotOrNotSection) hotOrNotSection.style.display = 'none';
+
+            // Add logged-in class to body for CSS targeting
+            document.body.classList.add('logged-in');
+
             if (newsCarousel) {
                 newsCarousel.style.display = 'block';
                 // Initialize carousel if not already done
@@ -97,9 +103,14 @@ class AuthManager {
             if (navMenu) navMenu.style.display = 'flex';
             if (createPostSection) createPostSection.style.display = 'block';
         } else {
-            // User is not logged in - only show hero, quote and login
+            // User is not logged in - show pre-login sections only
             if (heroSection) heroSection.style.display = 'flex';
             if (quoteSection) quoteSection.style.display = 'flex';
+            if (hotOrNotSection) hotOrNotSection.style.display = 'flex';
+
+            // Remove logged-in class from body
+            document.body.classList.remove('logged-in');
+
             if (newsCarousel) newsCarousel.style.display = 'none';
             if (mainContent) mainContent.style.display = 'none';
             if (authBtn) authBtn.style.display = 'inline';
