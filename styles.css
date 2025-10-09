@@ -158,6 +158,13 @@ main {
     z-index: 1;
 }
 
+/* Spacer to push quote section below hero */
+.hero-spacer {
+    height: calc(100vh - 80px);
+    visibility: hidden;
+    pointer-events: none;
+}
+
 /* Quote Section */
 .quote-section {
     background-color: #ffffff;
