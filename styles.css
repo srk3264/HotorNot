@@ -146,9 +146,7 @@ main {
 
 /* Hero Section - Shows before login */
 .hero-section {
-    position: fixed;
-    top: 80px;
-    left: 0;
+    position: relative;
     width: 100vw;
     height: calc(100vh - 80px);
     background-color: #EC9615;
@@ -156,13 +154,6 @@ main {
     align-items: center;
     justify-content: center;
     z-index: 1;
-}
-
-/* Spacer to push quote section below hero */
-.hero-spacer {
-    height: calc(100vh - 80px);
-    visibility: hidden;
-    pointer-events: none;
 }
 
 /* Quote Section */
