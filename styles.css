@@ -227,28 +227,7 @@ main {
 
 
 
-.quote-flame {
-    font-size: 3rem;
-    animation: flameFlicker 1.5s ease-in-out infinite;
-    position: absolute;
-}
 
-.top-flame {
-    top: -3rem;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.bottom-flame {
-    bottom: -3rem;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-@keyframes flameFlicker {
-    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
-    50% { transform: translateX(-50%) scale(1.1); opacity: 1; }
-}
 
 .hero-content {
     text-align: left;
