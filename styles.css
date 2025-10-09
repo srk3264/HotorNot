@@ -1748,7 +1748,7 @@ main.logged-in {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    margin: 3rem 0;
+    /* margin: 3rem 0; */
     flex-wrap: wrap;
 }
 
