@@ -895,12 +895,12 @@ class MarqueeAnimation {
 // Initialize marquee animation
 const marqueeAnimation = new MarqueeAnimation();
 
-// Quote typewriter animation
+// Bold quote animation for Hot or Not brand
 class QuoteAnimation {
     constructor() {
         this.quoteElements = document.querySelectorAll('.quote-item');
         this.currentQuoteIndex = 0;
-        this.typewriterTimeouts = [];
+        this.animationTimeouts = [];
         this.rotationInterval = null;
         this.quotes = [
             "The UN is basically cosplay for world leaders now.",
@@ -913,67 +913,68 @@ class QuoteAnimation {
     init() {
         if (this.quoteElements.length === 0) return;
 
-        // Initialize quote elements with empty text
-        this.quoteElements.forEach((element, index) => {
-            element.textContent = '';
-            element.setAttribute('data-original-text', this.quotes[index] || element.textContent);
+        // Set initial state - hide all quotes
+        this.quoteElements.forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(30px) scale(0.8)';
         });
 
-        // Start the typewriter rotation
-        this.startTypewriterRotation();
-    }
-
-    startTypewriterRotation() {
         // Start with first quote
-        this.typeWriter(0);
+        this.showQuote(0);
 
-        // Set up rotation every 5 seconds
-        this.rotationInterval = setInterval(() => {
-            this.currentQuoteIndex = (this.currentQuoteIndex + 1) % this.quotes.length;
-            this.typeWriter(this.currentQuoteIndex);
-        }, 5000);
+        // Start bold rotation every 3 seconds
+        this.startBoldRotation();
     }
 
-    typeWriter(quoteIndex) {
-        // Clear any existing timeouts
-        this.clearTypewriterTimeouts();
+    showQuote(index) {
+        // Clear any existing animations
+        this.clearAnimationTimeouts();
 
         // Hide all quotes first
         this.quoteElements.forEach(element => {
-            element.textContent = '';
             element.style.opacity = '0';
+            element.style.transform = 'translateY(30px) scale(0.8)';
         });
 
-        const element = this.quoteElements[quoteIndex];
-        const originalText = this.quotes[quoteIndex];
-        let charIndex = 0;
+        // Show selected quote with bold animation
+        if (this.quoteElements[index]) {
+            const element = this.quoteElements[index];
 
-        // Fade in the quote element
-        setTimeout(() => {
-            element.style.opacity = '1';
+            // Quick scale and fade in animation
+            setTimeout(() => {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0) scale(1)';
+                element.style.filter = 'drop-shadow(0 0 10px rgba(236, 107, 21, 0.3))';
 
-            // Typewriter function
-            const type = () => {
-                if (charIndex < originalText.length) {
-                    element.textContent += originalText.charAt(charIndex);
-                    charIndex++;
-                    const timeout = setTimeout(type, 50); // 50ms delay between characters
-                    this.typewriterTimeouts.push(timeout);
-                }
-            };
-
-            // Start typing
-            type();
-        }, 100); // Small delay for fade in effect
+                // Add subtle pulse after entrance
+                setTimeout(() => {
+                    element.style.filter = 'drop-shadow(0 0 15px rgba(236, 107, 21, 0.5))';
+                    setTimeout(() => {
+                        element.style.filter = 'drop-shadow(0 0 10px rgba(236, 107, 21, 0.3))';
+                    }, 200);
+                }, 300);
+            }, 100);
+        }
     }
 
-    clearTypewriterTimeouts() {
-        this.typewriterTimeouts.forEach(timeout => clearTimeout(timeout));
-        this.typewriterTimeouts = [];
+    nextQuote() {
+        this.currentQuoteIndex = (this.currentQuoteIndex + 1) % this.quotes.length;
+        this.showQuote(this.currentQuoteIndex);
+    }
+
+    startBoldRotation() {
+        this.rotationInterval = setInterval(() => {
+            this.nextQuote();
+        }, 3000); // 3 seconds for fast-paced brand
+    }
+
+    clearAnimationTimeouts() {
+        this.animationTimeouts.forEach(timeout => clearTimeout(timeout));
+        this.animationTimeouts = [];
     }
 
     stopRotation() {
-        this.clearTypewriterTimeouts();
+        this.clearAnimationTimeouts();
         if (this.rotationInterval) {
             clearInterval(this.rotationInterval);
             this.rotationInterval = null;
