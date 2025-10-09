@@ -1768,6 +1768,14 @@ main.logged-in {
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
+.o-word, .t-word {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
 .or-word {
     font-family: 'Inter', sans-serif;
     font-size: clamp(4rem, 12vw, 10rem);
