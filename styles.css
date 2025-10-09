@@ -1740,7 +1740,7 @@ body.logged-in .hot-or-not-section {
 }
 
 .intro-text {
-    color: rgba(255, 255, 255, 0.38);
+    color: rgba(255, 255, 255, 0.8);
     font-family: Inter;
     font-size: 120px;
     font-style: normal;
