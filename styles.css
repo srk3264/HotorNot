@@ -146,9 +146,7 @@ main {
 
 /* Hero Section - Shows before login */
 .hero-section {
-    position: fixed;
-    top: 80px;
-    left: 0;
+    position: relative;
     width: 100vw;
     height: calc(100vh - 80px);
     background-color: #EC9615;
