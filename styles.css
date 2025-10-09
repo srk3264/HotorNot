@@ -183,14 +183,14 @@ main {
 
 .flame-icon {
     position: absolute;
-    top: 2rem;
-    right: 3rem;
+    top: -50px;
+    right: -50px;
     z-index: 2;
 }
 
 .flame-svg {
-    width: 120px;
-    height: 120px;
+    width: 300px;
+    height: 300px;
     opacity: 0.9;
 }
 
