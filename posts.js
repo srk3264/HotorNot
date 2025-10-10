@@ -107,15 +107,14 @@ class PostManager {
     }
 
     setupPostForm() {
-        // Prevent duplicate form setup
-        if (this.postFormSetup) {
-            console.log('Post form already set up, skipping duplicate setup');
-            return;
-        }
+        // Reset flag each time to ensure fresh setup
+        this.postFormSetup = false;
 
         const postForm = document.getElementById('post-form');
         if (!postForm) {
-            console.warn('Post form not found');
+            console.warn('Post form not found, retrying...');
+            // Retry after a short delay in case DOM isn't ready
+            setTimeout(() => this.setupPostForm(), 100);
             return;
         }
 
@@ -123,7 +122,8 @@ class PostManager {
         const postContent = document.getElementById('post-content');
 
         if (!postTitle || !postContent) {
-            console.warn('Post form elements not found');
+            console.warn('Post form elements not found, retrying...');
+            setTimeout(() => this.setupPostForm(), 100);
             return;
         }
 
@@ -132,7 +132,8 @@ class PostManager {
         const contentCounter = document.querySelector('#post-content + .char-counter');
 
         if (!titleCounter || !contentCounter) {
-            console.warn('Character counters not found');
+            console.warn('Character counters not found, retrying...');
+            setTimeout(() => this.setupPostForm(), 100);
             return;
         }
 
@@ -175,7 +176,7 @@ class PostManager {
         });
 
         this.postFormSetup = true;
-        console.log('Post form setup completed');
+        console.log('Post form setup completed successfully');
     }
 
     async createPost(content, isAnonymous) {
