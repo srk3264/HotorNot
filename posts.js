@@ -994,20 +994,20 @@ class ScrollLockedSubwayAnimation {
         }, 1500);
     }
 
-    // Setup hover effect for subway image
-    setupHoverEffect() {
+    // Setup automatic alternating effect for subway image
+    setupAlternatingEffect() {
         if (!this.subwayImage) {
-            console.warn('Subway image not found for hover effect');
+            console.warn('Subway image not found for alternating effect');
             return;
         }
 
-        console.log('Setting up subway hover effect...');
+        console.log('Setting up subway alternating effect...');
 
-        // Wait for subway to be revealed before enabling hover
+        // Wait for subway to be revealed before starting alternation
         const checkForReveal = () => {
             if (this.subwayContainer.classList.contains('revealed')) {
-                console.log('Subway revealed, enabling hover effect');
-                this.enableHoverEffect();
+                console.log('Subway revealed, starting alternating effect');
+                this.startAlternatingEffect();
             } else {
                 setTimeout(checkForReveal, 100);
             }
@@ -1016,49 +1016,42 @@ class ScrollLockedSubwayAnimation {
         checkForReveal();
     }
 
-    enableHoverEffect() {
-        if (!this.subwayImage || this.hoverEnabled) return;
+    startAlternatingEffect() {
+        if (!this.subwayImage || this.alternatingInterval) return;
 
         this.originalSrc = this.subwayImage.src;
         // Use absolute URL to match the original image path
-        this.hoverSrc = this.originalSrc.replace('subway.png', 'subway-hover.png');
-        this.hoverEnabled = true;
+        this.alternateSrc = this.originalSrc.replace('subway.png', 'subway-hover.png');
+        this.isShowingAlternate = false;
+        this.alternatingInterval = null;
 
-        console.log('Subway hover effect enabled');
+        console.log('Subway alternating effect started');
         console.log('Original image src:', this.originalSrc);
-        console.log('Hover image src:', this.hoverSrc);
+        console.log('Alternate image src:', this.alternateSrc);
 
-        // Desktop hover events
-        this.subwayImage.addEventListener('mouseenter', () => {
-            console.log('Mouse enter detected');
-            this.switchToHoverImage();
-        });
-        this.subwayImage.addEventListener('mouseleave', () => {
-            console.log('Mouse leave detected');
-            this.switchToOriginalImage();
-        });
-
-        // Mobile touch events
-        this.subwayImage.addEventListener('touchstart', (e) => {
-            console.log('Touch start detected');
-            e.preventDefault();
-            this.switchToHoverImage();
-        });
-        this.subwayImage.addEventListener('touchend', () => {
-            console.log('Touch end detected');
-            this.switchToOriginalImage();
-        });
+        // Start alternating every 300ms
+        this.alternatingInterval = setInterval(() => {
+            this.switchToNextImage();
+        }, 300);
     }
 
-    switchToHoverImage() {
-        if (this.subwayImage && this.hoverEnabled) {
-            this.subwayImage.src = this.hoverSrc;
+    switchToNextImage() {
+        if (!this.subwayImage) return;
+
+        if (this.isShowingAlternate) {
+            this.subwayImage.src = this.originalSrc;
+            this.isShowingAlternate = false;
+        } else {
+            this.subwayImage.src = this.alternateSrc;
+            this.isShowingAlternate = true;
         }
     }
 
-    switchToOriginalImage() {
-        if (this.subwayImage && this.hoverEnabled) {
-            this.subwayImage.src = this.originalSrc;
+    stopAlternatingEffect() {
+        if (this.alternatingInterval) {
+            clearInterval(this.alternatingInterval);
+            this.alternatingInterval = null;
+            console.log('Subway alternating effect stopped');
         }
     }
 
@@ -1079,8 +1072,8 @@ class ScrollLockedSubwayAnimation {
 // Initialize scroll-locked subway animation
 const scrollLockedSubway = new ScrollLockedSubwayAnimation();
 
-// Setup subway hover effect
-scrollLockedSubway.setupHoverEffect();
+// Setup subway alternating effect
+scrollLockedSubway.setupAlternatingEffect();
 
 // Bounce Effect quote animation for Hot or Not brand
 class QuoteAnimation {
