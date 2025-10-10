@@ -643,18 +643,53 @@ class PostManager {
     }
 
     async editPost(postId) {
-        const postElement = document.querySelector(`[data-id="${postId}"]`);
-        const postContent = postElement.querySelector('.post-content');
-        const originalContent = postContent.textContent;
+        console.log('Starting edit for post:', postId);
 
-        // Create edit form
-        postContent.innerHTML = `
-            <textarea class="edit-textarea">${originalContent}</textarea>
-            <div class="edit-actions">
-                <button onclick="postManager.saveEdit('${postId}')">Save</button>
-                <button onclick="postManager.cancelEdit('${postId}', '${this.escapeHtml(originalContent)}')">Cancel</button>
+        const postElement = document.querySelector(`[data-id="${postId}"]`);
+        if (!postElement) {
+            console.error('Post element not found for ID:', postId);
+            return;
+        }
+
+        // Find the post content - look for the description or title
+        let postContent = postElement.querySelector('.post-description') || postElement.querySelector('.post-title');
+        if (!postContent) {
+            console.error('Post content not found in element');
+            return;
+        }
+
+        const originalContent = postContent.textContent;
+        console.log('Original content:', originalContent);
+
+        // Get the full post content from our stored posts data
+        const post = this.posts.find(p => p.id === postId);
+        if (!post) {
+            console.error('Post data not found for ID:', postId);
+            return;
+        }
+
+        const fullContent = post.content;
+        console.log('Full post content:', fullContent);
+
+        // Create edit form with the full content
+        const editFormHTML = `
+            <div class="edit-form">
+                <textarea class="edit-textarea" maxlength="2000">${fullContent}</textarea>
+                <div class="edit-actions">
+                    <button class="save-edit-btn" onclick="postManager.saveEdit('${postId}')">Save</button>
+                    <button class="cancel-edit-btn" onclick="postManager.cancelEdit('${postId}', \`${this.escapeHtml(fullContent)}\`)">Cancel</button>
+                </div>
             </div>
         `;
+
+        // Replace the post main content with edit form
+        const postMain = postElement.querySelector('.post-main');
+        if (postMain) {
+            postMain.innerHTML = editFormHTML;
+            console.log('Edit form created successfully');
+        } else {
+            console.error('Post main element not found');
+        }
     }
 
     async saveEdit(postId) {
@@ -684,9 +719,54 @@ class PostManager {
     }
 
     cancelEdit(postId, originalContent) {
+        console.log('Canceling edit for post:', postId);
+
         const postElement = document.querySelector(`[data-id="${postId}"]`);
-        const postContent = postElement.querySelector('.post-content');
-        postContent.textContent = originalContent;
+        if (!postElement) {
+            console.error('Post element not found for cancel');
+            return;
+        }
+
+        // Get the full post data
+        const post = this.posts.find(p => p.id === postId);
+        if (!post) {
+            console.error('Post data not found for cancel');
+            return;
+        }
+
+        // Recreate the post element with original content
+        const postMain = postElement.querySelector('.post-main');
+        if (postMain) {
+            // Create a title from the first line of content
+            const contentLines = post.content.split('\n');
+            const title = contentLines[0]?.substring(0, 50) + (contentLines[0]?.length > 50 ? '...' : '') || 'Untitled';
+            const description = contentLines.slice(1).join('\n') || '';
+
+            postMain.innerHTML = `
+                <h3 class="post-title">${this.escapeHtml(title)}</h3>
+                ${description ? `<p class="post-description">${this.escapeHtml(description)}</p>` : ''}
+                <div class="post-interactions">
+                    <div class="like-section">
+                        <button class="like-btn" onclick="postManager.likePost('${postId}', 'like')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                <path d="M7 10v12"/>
+                                <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
+                            </svg>
+                            <span>${this.likesData[postId]?.likes || 0}</span>
+                        </button>
+                        <button class="dislike-btn" onclick="postManager.likePost('${postId}', 'dislike')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                <path d="M17 14V2"/>
+                                <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/>
+                            </svg>
+                            <span>${this.likesData[postId]?.dislikes || 0}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            console.log('Edit cancelled, post restored');
+        }
     }
 
     async deletePost(postId) {
