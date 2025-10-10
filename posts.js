@@ -1020,7 +1020,8 @@ class ScrollLockedSubwayAnimation {
         if (!this.subwayImage || this.hoverEnabled) return;
 
         this.originalSrc = this.subwayImage.src;
-        this.hoverSrc = 'images/subway-hover.png';
+        // Use absolute URL to match the original image path
+        this.hoverSrc = this.originalSrc.replace('subway.png', 'subway-hover.png');
         this.hoverEnabled = true;
 
         console.log('Subway hover effect enabled');
