@@ -34,10 +34,18 @@ class PostManager {
     setupAuthStateHandling() {
         // Listen for auth changes
         window.supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Auth state changed:', event, session?.user ? 'logged in' : 'logged out');
+
             if (session?.user) {
                 this.showMainContent();
                 this.loadPosts();
-                this.setupPostForm(); // Set up form when logging in
+                // Only setup form if not already set up
+                if (!this.postFormSetup) {
+                    console.log('Setting up post form after login');
+                    this.setupPostForm();
+                } else {
+                    console.log('Post form already set up, skipping');
+                }
             } else {
                 this.hideMainContent();
                 this.clearPosts();
@@ -146,8 +154,17 @@ class PostManager {
             contentCounter.textContent = `${postContent.value.length}/1000`;
         });
 
+        // Prevent multiple rapid submissions
+        let isSubmitting = false;
+
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Prevent multiple rapid submissions
+            if (isSubmitting) {
+                console.log('Form submission already in progress, ignoring...');
+                return;
+            }
 
             const title = postTitle.value.trim();
             const content = postContent.value.trim();
@@ -156,6 +173,9 @@ class PostManager {
                 this.showMessage('Please enter both title and content!', 'error');
                 return;
             }
+
+            isSubmitting = true;
+            console.log('Starting form submission...');
 
             const fullContent = `${title}\n\n${content}`;
             const result = await this.createPost(fullContent, this.isAnonymous);
@@ -170,9 +190,13 @@ class PostManager {
                 this.updateToggleUI();
                 this.showMessage('Hot take posted successfully!', 'success');
                 this.loadPosts(); // Reload posts to show the new one
+                console.log('Form submission completed successfully');
             } else {
                 this.showMessage(result.message, 'error');
+                console.log('Form submission failed:', result.message);
             }
+
+            isSubmitting = false;
         });
 
         this.postFormSetup = true;
