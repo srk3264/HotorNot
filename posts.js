@@ -994,6 +994,52 @@ class ScrollLockedSubwayAnimation {
         }, 1500);
     }
 
+    // Setup hover effect for subway image
+    setupHoverEffect() {
+        if (!this.subwayImage) return;
+
+        // Wait for subway to be revealed before enabling hover
+        const checkForReveal = () => {
+            if (this.subwayContainer.classList.contains('revealed')) {
+                this.enableHoverEffect();
+            } else {
+                setTimeout(checkForReveal, 100);
+            }
+        };
+
+        checkForReveal();
+    }
+
+    enableHoverEffect() {
+        if (!this.subwayImage || this.hoverEnabled) return;
+
+        this.originalSrc = this.subwayImage.src;
+        this.hoverSrc = 'images/subway-hover.png';
+        this.hoverEnabled = true;
+
+        console.log('Subway hover effect enabled');
+
+        // Desktop hover events
+        this.subwayImage.addEventListener('mouseenter', () => this.switchToHoverImage());
+        this.subwayImage.addEventListener('mouseleave', () => this.switchToOriginalImage());
+
+        // Mobile touch events
+        this.subwayImage.addEventListener('touchstart', () => this.switchToHoverImage());
+        this.subwayImage.addEventListener('touchend', () => this.switchToOriginalImage());
+    }
+
+    switchToHoverImage() {
+        if (this.subwayImage && this.hoverEnabled) {
+            this.subwayImage.src = this.hoverSrc;
+        }
+    }
+
+    switchToOriginalImage() {
+        if (this.subwayImage && this.hoverEnabled) {
+            this.subwayImage.src = this.originalSrc;
+        }
+    }
+
     // Method to manually trigger (for testing)
     manualTrigger() {
         this.triggerSubwayAnimation();
@@ -1010,6 +1056,9 @@ class ScrollLockedSubwayAnimation {
 
 // Initialize scroll-locked subway animation
 const scrollLockedSubway = new ScrollLockedSubwayAnimation();
+
+// Setup subway hover effect
+scrollLockedSubway.setupHoverEffect();
 
 // Bounce Effect quote animation for Hot or Not brand
 class QuoteAnimation {
