@@ -996,11 +996,17 @@ class ScrollLockedSubwayAnimation {
 
     // Setup hover effect for subway image
     setupHoverEffect() {
-        if (!this.subwayImage) return;
+        if (!this.subwayImage) {
+            console.warn('Subway image not found for hover effect');
+            return;
+        }
+
+        console.log('Setting up subway hover effect...');
 
         // Wait for subway to be revealed before enabling hover
         const checkForReveal = () => {
             if (this.subwayContainer.classList.contains('revealed')) {
+                console.log('Subway revealed, enabling hover effect');
                 this.enableHoverEffect();
             } else {
                 setTimeout(checkForReveal, 100);
@@ -1018,14 +1024,29 @@ class ScrollLockedSubwayAnimation {
         this.hoverEnabled = true;
 
         console.log('Subway hover effect enabled');
+        console.log('Original image src:', this.originalSrc);
+        console.log('Hover image src:', this.hoverSrc);
 
         // Desktop hover events
-        this.subwayImage.addEventListener('mouseenter', () => this.switchToHoverImage());
-        this.subwayImage.addEventListener('mouseleave', () => this.switchToOriginalImage());
+        this.subwayImage.addEventListener('mouseenter', () => {
+            console.log('Mouse enter detected');
+            this.switchToHoverImage();
+        });
+        this.subwayImage.addEventListener('mouseleave', () => {
+            console.log('Mouse leave detected');
+            this.switchToOriginalImage();
+        });
 
         // Mobile touch events
-        this.subwayImage.addEventListener('touchstart', () => this.switchToHoverImage());
-        this.subwayImage.addEventListener('touchend', () => this.switchToOriginalImage());
+        this.subwayImage.addEventListener('touchstart', (e) => {
+            console.log('Touch start detected');
+            e.preventDefault();
+            this.switchToHoverImage();
+        });
+        this.subwayImage.addEventListener('touchend', () => {
+            console.log('Touch end detected');
+            this.switchToOriginalImage();
+        });
     }
 
     switchToHoverImage() {
