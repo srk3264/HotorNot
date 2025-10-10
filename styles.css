@@ -428,8 +428,8 @@ main.logged-in {
     z-index: 1000;
     opacity: 0;
     border-radius: 24px;
-    /* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.2); */
-    transition: all 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4), 0 15px 40px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .subway-container.revealed {
