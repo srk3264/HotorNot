@@ -3,6 +3,7 @@ class PostManager {
     constructor() {
         this.posts = [];
         this.isAnonymous = false; // Track anonymous state
+        this.postFormSetup = false; // Flag to prevent duplicate form setup
         this.init();
     }
 
@@ -106,13 +107,34 @@ class PostManager {
     }
 
     setupPostForm() {
+        // Prevent duplicate form setup
+        if (this.postFormSetup) {
+            console.log('Post form already set up, skipping duplicate setup');
+            return;
+        }
+
         const postForm = document.getElementById('post-form');
+        if (!postForm) {
+            console.warn('Post form not found');
+            return;
+        }
+
         const postTitle = document.getElementById('post-title');
         const postContent = document.getElementById('post-content');
+
+        if (!postTitle || !postContent) {
+            console.warn('Post form elements not found');
+            return;
+        }
 
         // Character counters
         const titleCounter = document.querySelector('#post-title + .char-counter');
         const contentCounter = document.querySelector('#post-content + .char-counter');
+
+        if (!titleCounter || !contentCounter) {
+            console.warn('Character counters not found');
+            return;
+        }
 
         // Update character counters
         postTitle.addEventListener('input', () => {
@@ -151,6 +173,9 @@ class PostManager {
                 this.showMessage(result.message, 'error');
             }
         });
+
+        this.postFormSetup = true;
+        console.log('Post form setup completed');
     }
 
     async createPost(content, isAnonymous) {
