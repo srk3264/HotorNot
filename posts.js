@@ -154,15 +154,27 @@ class PostManager {
             contentCounter.textContent = `${postContent.value.length}/1000`;
         });
 
-        // Prevent multiple rapid submissions
+        // Prevent multiple rapid submissions with enhanced protection
         let isSubmitting = false;
+        let lastSubmissionTime = 0;
+        const MIN_SUBMISSION_INTERVAL = 1000; // Minimum 1 second between submissions
 
         postForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Prevent multiple rapid submissions
+            const now = Date.now();
+            const timeSinceLastSubmission = now - lastSubmissionTime;
+
+            // Enhanced protection against rapid submissions
             if (isSubmitting) {
                 console.log('Form submission already in progress, ignoring...');
+                this.showMessage('Please wait, post is being submitted...', 'error');
+                return;
+            }
+
+            if (timeSinceLastSubmission < MIN_SUBMISSION_INTERVAL) {
+                console.log('Submission too rapid, ignoring...');
+                this.showMessage('Please wait a moment before submitting again...', 'error');
                 return;
             }
 
@@ -175,7 +187,17 @@ class PostManager {
             }
 
             isSubmitting = true;
-            console.log('Starting form submission...');
+            lastSubmissionTime = now;
+            console.log('Starting form submission...', {
+                titleLength: title.length,
+                contentLength: content.length,
+                isAnonymous: this.isAnonymous,
+                timestamp: new Date().toISOString()
+            });
+
+            // Disable form during submission
+            postForm.style.opacity = '0.7';
+            postForm.style.pointerEvents = 'none';
 
             const fullContent = `${title}\n\n${content}`;
             const result = await this.createPost(fullContent, this.isAnonymous);
@@ -196,7 +218,10 @@ class PostManager {
                 console.log('Form submission failed:', result.message);
             }
 
+            // Re-enable form after submission
             isSubmitting = false;
+            postForm.style.opacity = '1';
+            postForm.style.pointerEvents = 'auto';
         });
 
         this.postFormSetup = true;
