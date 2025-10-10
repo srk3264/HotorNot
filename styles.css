@@ -1524,6 +1524,24 @@ main.logged-in {
     .quote-text {
         font-size: 1.8rem;
     }
+
+    /* Fix mobile horizontal padding after login */
+    #main-content {
+        padding: 0 1rem;
+    }
+
+    #posts-feed {
+        padding: 0 1rem;
+    }
+
+    #posts-container {
+        padding: 0 0.5rem;
+    }
+
+    .post-card {
+        max-width: 100%;
+        margin: 0.75rem 0;
+    }
 }
 
 @media (max-width: 600px) {
