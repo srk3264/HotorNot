@@ -1531,7 +1531,7 @@ main.logged-in {
     }
 
     #posts-feed {
-        padding: 0 1rem;
+        padding: 0 0rem;
     }
 
     #posts-container {
